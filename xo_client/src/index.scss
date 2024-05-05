@@ -1,7 +1,5 @@
-* {
-    font-family: 'Pacifico', cursive;
-  
-}
+@import './vars.scss';
+@import './mixin.scss';
 
 body {
       background: #3D7AD6;
@@ -12,8 +10,3 @@ body {
     margin: 0;
 }
 
-button {
-    background-color: transparent;
-    cursor: pointer;
-    border: none;
-}

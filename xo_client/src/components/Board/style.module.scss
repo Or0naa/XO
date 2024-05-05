@@ -9,17 +9,22 @@
 
 .square_frame {
     width: 70px;
-    height: 70px;
+    height: 68px;
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
+    background-color: #ccfcfc;
+    border-radius: 10px;
+
 }
 
 .board {
-    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
+    background-color: #fff;
+    flex-direction: column;
+    border-radius: 10px;
 
 }

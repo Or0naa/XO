@@ -1,12 +1,10 @@
 .X_O {
     font-size: 50px;
-    background-image: linear-gradient(to bottom,  #fcd015 50%, #fbb500 50%);
+    background-image: linear-gradient(to bottom,  #fcd015 80%, #fbb500 30%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     -webkit-text-stroke: 1px #000;
-    // font-family: 'Pacifico', cursive;
     color: transparent;    
-    // text-shadow:  -12px 0 0 #000;
     filter: drop-shadow(-3px 0px 0px rgba(0, 0, 0));
 
 }

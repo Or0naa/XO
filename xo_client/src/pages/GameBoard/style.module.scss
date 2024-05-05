@@ -1,0 +1,23 @@
+@import '../../vars.scss';
+@import '../../mixin.scss';
+
+.gameBoard {
+    @extend .f-c;
+    flex-direction: column;
+
+
+
+    .yellowLine {
+        width: 100vw;
+        height: 50px;
+        background-color: #FCD015;
+        border-bottom: 3px #b48404 solid;
+        border-top: #b48404 3px solid;
+        margin-bottom: 50px;
+        position: relative;
+    }
+
+    .btn {
+        @extend .b;
+    }
+}
