@@ -6,8 +6,9 @@ import Welcome from "./pages/Welcome";
 export default function App() {
   return (
     <div>
- <Welcome/>
-{/* <JoinGame/> */}
+      <Board />
+      <Menu />
+      <Welcome />
     </div>
   )
 }
