@@ -1,0 +1,14 @@
+.frame {
+    border: outset;
+    border-top: 3px #000 solid;
+    border-right:  3px #000 solid;
+    border-bottom:  4px #000 solid;
+    border-left: 5px #000 solid;
+    border-radius: 10px;
+    height: fit-content;
+    width: fit-content;
+
+    p {
+        padding: 5px;
+    }
+}
