@@ -1,4 +1,5 @@
 import Board from "./components/Board";
+import JoinGame from "./pages/JoinGame";
 import Menu from "./pages/Menu";
 import Welcome from "./pages/Welcome";
 

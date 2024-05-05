@@ -5,11 +5,13 @@
     // justify-content: center; 
     img {
         display: block;
-        width: 80%;
-        height: 80%;
-        margin-bottom: 50px;
+        width: 60%;
+        height: 60%;
+        margin-bottom: 70px;
+        filter: drop-shadow(0 0 0.75rem white)
     }
     .buttons {
+        margin-top: 50px;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -17,11 +19,11 @@
 
         Button {
             margin: 20px;
-          padding: 10px;
-          font-size: larger;
+          padding: 15px;
+          font-size: 30px;
           color: white;
-          font-weight: bold;
-       
+          font-weight: bolder;
+          text-shadow: -2px 0 #cd970d, 0 1px #cd970d, 1px 0 #cd970d, 0 -2px #cd970d;
         }
     }
 }
