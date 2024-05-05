@@ -26,6 +26,8 @@ export default function Board() {
         setBoard(newBoard); // עדכון הלוח בהתאם
     }, [squares]);
 
+
+
     const handleSquare = (i, j) => {
         // console.log(board, i, j);
         if (board[i][j] === "") {
@@ -33,21 +35,23 @@ export default function Board() {
             const newBoard = [...board];
             newBoard[i][j] = value;
             setBoard(newBoard);
-    
-            const result = check(newBoard, turn ? "X" : "O" , i, j);
+
+
+            const result = check(newBoard, turn ? "X" : "O", i, j);
             if (result == true) {
-                alert(`ניצחון בתור ${value}`);
                 setWin(true);
                 setWinner(value);
+                console.log("win");
             } else {
                 setTurn(!turn);
             }
         }
+
     }
 
     return (
-        <div className={styles.board}>
-            <Frame >
+        <Frame >
+            <div className={styles.board}>
                 {board.map((line, i) => (
                     <div key={i} className={styles.board_row}>
                         {line.map((square, j) => (
@@ -60,6 +64,6 @@ export default function Board() {
                         ))}
                     </div>
                 ))}
-            </Frame></div>
+            </div>  </Frame>
     )
 }

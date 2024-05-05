@@ -1,0 +1,11 @@
+@mixin alert($color: red) {
+
+    border-radius: 20px;
+    padding: 10px;
+
+    &:hover {
+        color: darken($color: $color, $amount: 10%);
+        background-color: lighten($color: $color,  $amount:  45%);
+        cursor: pointer;
+    }
+}
