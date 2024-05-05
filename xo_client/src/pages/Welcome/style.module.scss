@@ -1,0 +1,48 @@
+
+  
+  .welcome {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; 
+    margin: 5px;
+    height: 100vh; 
+    width: 100vw; 
+  
+    img {
+      display: block;
+    }
+  
+    .ow1 {
+      position: absolute;
+      top: 10vh; /* Changed from top: 10% */
+      left: 15vw; /* Changed from left: 15% */
+      transform: translate(-50%, -50%) scale(0.5);
+      filter: blur(2px);
+    }
+  
+    .ow2 {
+      position: absolute;
+      top: 10vh; /* Changed from top: 10% */
+      right: 15vw; /* Changed from right: 15% */
+      transform: translate(50%, -50%) rotate(25deg) scale(0.3);
+      filter: blur(4px);
+    }
+  
+    .ow3 {
+      position: absolute;
+      bottom: 10vh; /* Changed from bottom: 10% */
+      left: 15vw; /* Changed from left: 15% */
+      transform: translate(-50%, 50%) rotate(25deg) scale(0.3);
+      filter: blur(4px);
+    }
+  
+    .ow4 {
+      position: absolute;
+      bottom: 10vh; /* Changed from bottom: 10% */
+      right: 15vw; /* Changed from right: 10% */
+      transform: translate(50%, 50%) rotate(-25deg) scale(0.5);
+      filter: blur(2px);
+    }
+  }
