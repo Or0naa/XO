@@ -27,28 +27,20 @@ export default function Board() {
     }, [squares]);
 
     const handleSquare = (i, j) => {
-        // אם הריבוע ריק
+        // console.log(board, i, j);
         if (board[i][j] === "") {
-            // הערך שהוכנס על ידי המשתמש (תור X או O)
             const value = turn ? "X" : "O";
-            // יצירת לוח חדש עם הערך שהוכנס במקום המתאים
             const newBoard = [...board];
             newBoard[i][j] = value;
-            // עדכון הלוח בהתאם
             setBoard(newBoard);
-
-            // שליחת הלוח המלא והערך שהוכנס לפונקציה check
-            if (check(newBoard, value)) {
-                // אם הפונקציה check מחזירה true, יש ניצחון
+    
+            const result = check(newBoard, "X", i, j);
+            if (result === "win") {
                 alert(`ניצחון בתור ${value}`);
                 setWin(true);
-                setWinner(value); // עדכון הנצחון בהתאם לערך המנצח
-                // כאן תוכלי להגדיר כל פעולות נוספות שתרצי לבצע כאשר יש ניצחון
+                setWinner(value);
             } else {
-                // עדכון התור לשחקן השני
-                console.log(turn);
                 setTurn(!turn);
-                // כאן תוכלי להגדיר כל פעולות נוספות שתרצי לבצע לאחר כל תור
             }
         }
     }
