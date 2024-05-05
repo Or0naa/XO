@@ -1,10 +1,10 @@
 import React from 'react'
 import styles from './style.module.scss';
 
-export default function Frame() {
+export default function Frame({ children }) {
   return (
     <div className={styles.frame}>
-<p>hello</p>
+      {children}
     </div>
   )
 }
