@@ -1,3 +1,4 @@
+import Board from "./components/Board";
 import Menu from "./pages/Menu";
 import Welcome from "./pages/Welcome";
 
