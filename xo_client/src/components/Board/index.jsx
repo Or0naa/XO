@@ -34,8 +34,8 @@ export default function Board() {
             newBoard[i][j] = value;
             setBoard(newBoard);
     
-            const result = check(newBoard, "X", i, j);
-            if (result === "win") {
+            const result = check(newBoard, turn ? "X" : "O" , i, j);
+            if (result == true) {
                 alert(`ניצחון בתור ${value}`);
                 setWin(true);
                 setWinner(value);
