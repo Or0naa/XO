@@ -1,6 +1,15 @@
 * {
     font-family: 'Pacifico', cursive;
-    
+  
+}
+
+body {
+      background: #3D7AD6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
 }
 
 button {
