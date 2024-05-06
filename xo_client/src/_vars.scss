@@ -2,11 +2,19 @@
 
 :root {
     --bc: #3D7AD6;
-    font-family: 'luckiest guy', cursive;
+    --buttonC: #fcd015;
+    --shadowC: #fbb500;
+}
+
+*{
+    font-family: 'Luckiest Guy', cursive;
     -webkit-text-stroke: 1px #000;
+    color: #fff;
 }
 
 $bgColor: var(--bc);
+$buttonColor: var(--buttonC);
+$shadowColor: var(--shadowC);
 
 .f-c {
     display: flex;
@@ -15,20 +23,24 @@ $bgColor: var(--bc);
 }
 
 .b {
-    margin-top: 50px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 
-    Button {
-
+    & > Button {
+        background-color: $buttonColor;
+        border-radius: 150px;
         width: 80vw;
         margin: 20px;
         padding: 15px;
         font-size: 30px;
-        color: white;
-        font-weight: bolder;
-        text-shadow: -2px 0 #cd970d, 0 1px #cd970d, 1px 0 #cd970d, 0 -2px #cd970d;
+        text-shadow: 2px 2px #000;
+        border: 0px;
+        border-bottom: 0.01px solid $shadowColor;
+        box-shadow: 0 4px 0 0 $shadowColor;
+        align-items: center;
+        justify-content: center;
+        padding-bottom: 3px;
     }
 }
