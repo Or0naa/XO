@@ -4,6 +4,7 @@ import styles from './style.module.scss';
 import { check } from '../../functions/win';
 import X_index from '../XO/X_index';
 import O_index from '../XO/O_index';
+import { computerMove } from '../../functions/againstComputer';
 
 export default function Board() {
     const [board, setBoard] = useState([]);
@@ -14,56 +15,67 @@ export default function Board() {
     const [winningSquares, setWinningSquares] = useState([]);
 
     useEffect(() => {
-        // יצירת לוח הריבועים
+        // Create the board
         const newBoard = [];
         for (let i = 0; i < squares; i++) {
             const line = [];
             for (let j = 0; j < squares; j++) {
-                line.push(""); // מקדם את הלוח בשורות ריקות
+                line.push(""); // Initialize the board with empty squares
             }
-            newBoard.push(line); // מקדם את הלוח בשורות שמכילות את הריבועים הריקים
+            newBoard.push(line); // Push the line of squares to the board
         }
-        setBoard(newBoard); // עדכון הלוח בהתאם
+        setBoard(newBoard); // Update the board accordingly
     }, [squares]);
 
-
-
     const handleSquare = (i, j) => {
-        // console.log(board, i, j);
-        if (board[i][j] === "") {
-            const value = turn ? "X" : "O";
-            const newBoard = [...board];
-            newBoard[i][j] = value;
-            setBoard(newBoard);
+        if (win) return;
+        if (board[i][j] !== "") return;
 
+        const value = turn ? "X" : "O";
+        const newBoard = [...board];
+        newBoard[i][j] = value;
+        setBoard(newBoard);
+        // setTurn(!turn);
 
-            const result = check(newBoard, turn ? "X" : "O", i, j);
-            if (result == true) {
-                setWin(true);
-                setWinner(value);
-                console.log("win");
-            } else {
-                setTurn(!turn);
-            }
+        const result = check(newBoard, value, i, j);
+        if (result) {
+            setWin(true);
+            setWinner(value);
+            console.log("Win: ", value);
+        } else {
+            handleComputerMove(); // Call handleComputerMove function after updating the board
+        }
+    }
+
+    const handleComputerMove = async () => {
+        await new Promise(resolve => setTimeout(resolve, 100));
+        const newBoard = computerMove(board);
+        setBoard(newBoard.board);
+        const result = check(board, "O", newBoard.i, newBoard.j);
+        if (result) {
+            setWin(true);
+            setWinner("O");
+            console.log("Win: ", "O");
         }
 
+        // setTurn(!turn);
     }
 
     return (
-        <Frame >
+        <Frame>
             <div className={styles.board}>
                 {board.map((line, i) => (
                     <div key={i} className={styles.board_row}>
                         {line.map((square, j) => (
-
-                            <Frame >
-                                <div key={j} className={styles.square_frame} onClick={() => handleSquare(i, j)}>
-                                    {square == "X" ? <X_index /> : square == "O" ? <O_index /> : ""} </div>
+                            <Frame key={j}>
+                                <div className={styles.square_frame} onClick={() => handleSquare(i, j)}>
+                                    {square === "X" ? <X_index /> : square === "O" ? <O_index /> : ""}
+                                </div>
                             </Frame>
-
                         ))}
                     </div>
                 ))}
-            </div>  </Frame>
-    )
+            </div>
+        </Frame>
+    );
 }
