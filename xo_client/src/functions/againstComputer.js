@@ -1,77 +1,86 @@
 //make the next move on tic tac toe
+import { check } from "./win";
 
-
-export function computerMove(board) {
-    let bestScore = -Infinity;
-    let bestMove = null;
-    for (let i = 0; i < board.length; i++) {
-        if (board[i] === '') {
-            board[i] = ai;
-            let score = minimax(board, 0, false);
-            board[i] = '';
-            if (score > bestScore) {
-                bestScore = score;
-                bestMove = i;
-            }
-        }
-    }
-    return bestMove;
-}
-
-
-// הגדרת משתנים
 const ai = "O"; // סימון של המחשב
 const human = "X"; // סימון של השחקן
 
-// פונקציה לחישוב המהלך הטוב ביותר עבור המחשב באמצעות Minimax
-function minimax(board, depth, isMaximizing) {
-    // פונקציה להערכת המצב הנוכחי של הלוח
-    function evaluate(board) {
-        // כאן יש להוסיף את הלוגיקה שלך להערכת המצב הנוכחי של הלוח
-    }
 
-    // פונקציה להחזרת הערך המינימלי בין שני ערכים
-    function min(a, b) {
-        return a < b ? a : b;
-    }
 
-    // פונקציה להחזרת הערך המקסימלי בין שני ערכים
-    function max(a, b) {
-        return a > b ? a : b;
-    }
-
-    // בדיקת תנאי סיום - אם המשחק הסתיים או הגיע לעומק המקסימלי
-    let result = evaluate(board);
-    if (result !== null || depth === 0) {
-        return result;
-    }
-
-    // בדיקת מצב התור
-    if (isMaximizing) {
-        let bestScore = -Infinity;
-        for (let i = 0; i < board.length; i++) {
-            for (let j = 0; j < board[i].length; j++) {
-                if (board[i][j] === '') {
-                    board[i][j] = ai;
-                    let score = minimax(board, depth - 1, false);
-                    board[i][j] = '';
-                    bestScore = max(score, bestScore);
-                }
-            }
-        }
-        return bestScore;
-    } else {
-        let bestScore = Infinity;
-        for (let i = 0; i < board.length; i++) {
-            for (let j = 0; j < board[i].length; j++) {
-                if (board[i][j] === '') {
-                    board[i][j] = human;
-                    let score = minimax(board, depth - 1, true);
-                    board[i][j] = '';
-                    bestScore = min(score, bestScore);
-                }
-            }
-        }
-        return bestScore;
-    }
+export function computerMove(board) {
+    let newBoard = {}
+    let computerMove = computerWins(board, newBoard);
+    if (computerMove) return computerMove
+    let computerBlock = computerBestMove(board, newBoard);
+    if (computerBlock) return computerBlock
+    let computerRandom = randomMove(board, newBoard);
+    return computerRandom;
 }
+
+function computerWins(board, newBoard) {
+    let i = 0;
+    let j = 0;
+    let foundMove = false;
+    while (i < board.length && !foundMove) {
+        if (board[i][j] === '') {
+            board[i][j] = ai;
+            if (check(board, ai, i, j)) {
+                newBoard.board = board;
+                newBoard.i = i;
+                newBoard.j = j;
+                foundMove = true;
+            }
+            if (!foundMove) {
+                board[i][j] = ''
+            }
+        }
+        j++;
+        if (j >= board.length) {
+            j = 0;
+            i++;
+        }
+    }
+    return foundMove ? newBoard : null;
+}
+
+function computerBestMove(board, newBoard) {
+    let i = 0;
+    let j = 0;
+    let foundMove = false;
+    while (i < board.length && !foundMove) {
+        if (board[i][j] === '') {
+            board[i][j] = human;
+            if (!check(board, human, i, j)) {
+                board[i][j] = '';
+            } else {
+                board[i][j] = ai;
+                newBoard.board = board;
+                newBoard.i = i;
+                newBoard.j = j;
+                foundMove = true;
+            }
+        }
+        j++;
+        if (j >= board.length) {
+            j = 0;
+            i++;
+        }
+    }
+    if (foundMove) return newBoard;
+    return null;
+}
+
+function randomMove(board, newBoard) {
+    let random = Math.floor(Math.random() * 9);
+    let i = Math.floor(random / 3);
+    let j = random % 3;
+    if (board[i][j] === '') {
+        board[i][j] = ai;
+        newBoard.board = board;
+        newBoard.i = i;
+        newBoard.j = j;
+        return newBoard;
+    }
+    return randomMove(board, newBoard);
+}
+
+
