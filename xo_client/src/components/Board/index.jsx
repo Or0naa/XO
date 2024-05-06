@@ -12,7 +12,7 @@ export default function Board() {
     const [turn, setTurn] = useState(true);
     const [win, setWin] = useState(false);
     const [winner, setWinner] = useState("");
-    const [winningSquares, setWinningSquares] = useState([]);
+    const [gameType, setGameType] = useState( "computer");
 
     useEffect(() => {
         // Create the board
@@ -27,7 +27,7 @@ export default function Board() {
         setBoard(newBoard); // Update the board accordingly
     }, [squares]);
 
-    const handleSquare = (i, j) => {
+    const handleSquare = (i, j, gameType) => {
         if (win) return;
         if (board[i][j] !== "") return;
 
@@ -43,7 +43,12 @@ export default function Board() {
             setWinner(value);
             console.log("Win: ", value);
         } else {
-            handleComputerMove(); // Call handleComputerMove function after updating the board
+            if (gameType == "computer") {
+                handleComputerMove();
+            }
+            if (gameType == "friend") {
+                handleFriendMove();
+            }
         }
     }
 
@@ -57,8 +62,19 @@ export default function Board() {
             setWinner("O");
             console.log("Win: ", "O");
         }
+    }
 
-        // setTurn(!turn);
+    const handleFriendMove = () => {
+        // const newBoard = socket(board);
+        // setBoard(newBoard.board);
+        // const result = check(board, "O", newBoard.i, newBoard.j);
+        // if (result) {
+        //     setWin(true);
+        //     setWinner("O");
+        //     console.log("Win: ", "O");
+        // }
+        setTurn(!turn);
+    
     }
 
     return (
@@ -68,7 +84,7 @@ export default function Board() {
                     <div key={i} className={styles.board_row}>
                         {line.map((square, j) => (
                             <Frame key={j}>
-                                <div className={styles.square_frame} onClick={() => handleSquare(i, j)}>
+                                <div className={styles.square_frame} onClick={() => handleSquare(i, j, gameType)}>
                                     {square === "X" ? <X_index /> : square === "O" ? <O_index /> : ""}
                                 </div>
                             </Frame>

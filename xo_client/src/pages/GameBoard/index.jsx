@@ -1,6 +1,7 @@
 import React from 'react'
 import Board from '../../components/Board'
 import style from './style.module.scss'
+import Button from '../../components/Button'
 
 
 export default function GameBoard() {
@@ -9,7 +10,7 @@ export default function GameBoard() {
             <div className={style.yellowLine}></div>
             <div className={style.boardContainer}>
             <Board /></div>
-           <div className={style.btn}> <button>Back</button></div>
+           <div className={style.btn}> <Button>Back</Button></div>
         </div>
     )
 }

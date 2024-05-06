@@ -1,5 +1,8 @@
+@import '../../vars.scss';
+@import '../../mixin.scss';
+
 .board_row {
-    display: flex;
+    @extend .f-c;
     flex-direction: row;
     height: 70px;
     gap: 10px;
@@ -8,11 +11,9 @@
 }
 
 .square_frame {
+    @extend .f-c;
     width: 70px;
     height: 68px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     cursor: pointer;
     background-color: #ccfcfc;
     border-radius: 10px;
@@ -20,9 +21,7 @@
 }
 
 .board {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    @extend .f-c;
     background-color: #fff;
     flex-direction: column;
     border-radius: 10px;
