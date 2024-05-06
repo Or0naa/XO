@@ -4,6 +4,8 @@ import Title from '../../components/Title'
 import Frame from '../../components/Frame'
 import Button from '../../components/Button'
 import CreateGame from '../../pages/CreateGame'
+import style from './style.module.scss'
+
 
 export default function JoinGame() {
   return (
@@ -13,7 +15,8 @@ export default function JoinGame() {
         Join A Game
       </Title>
       <Frame>
-        <h1>Join Game</h1>
+        <div >
+        <input className={style.join} type="text" placeholder='Enter code game' /></div>
       </Frame>
       <Button>
         Join
