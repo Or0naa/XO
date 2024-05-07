@@ -5,16 +5,37 @@
     @extend .f-c;
     flex-direction: column;
 
-
-
     .yellowLine {
         width: 100vw;
-        height: 50px;
-        background-color: #FCD015;
-        border-bottom: 3px #b48404 solid;
-        border-top: #b48404 3px solid;
+        height: 70px;
+        background-color: $buttonColor;
         margin-bottom: 50px;
         position: relative;
+        @extend .f-c;
+        
+
+
+        .orangeBack {
+            width: 120%;
+            ;
+            height: 70px;
+            background-color: $borderColor;
+            position: absolute;
+            top: 6px;
+            left: -10px;
+            z-index: -1;
+            transform-origin: left top; // התחום ממנו יתבצע ה-transform
+            transform: rotate(-2deg) skewX(2deg); // מסובב ומשנה את צורת האלמנט
+            box-shadow: inset 0 0 0 1px darken($color: #3D7AD6, $amount: 10); // הגבול המותאם
+        }
+
+        .players{
+            position: absolute;
+            @extend .f-c;
+            justify-content: space-between;
+            width: 70%;
+
+        }
     }
 
     .btn {

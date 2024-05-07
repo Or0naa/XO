@@ -30,6 +30,15 @@ export default function Board() {
     const handleSquare = (i, j, gameType) => {
         if (win) return;
         if (board[i][j] !== "") return;
+        const isBoardFull = board;
+        isBoardFull[i][j] = turn ? "X" : "O";
+        const draw = isBoardFull.flat().every(square => square !== "");
+        if (draw) {
+            setWin(true);
+            setWinner("Draw");
+            console.log("Draw");
+            return;
+        }
 
         const value = turn ? "X" : "O";
         const newBoard = [...board];
