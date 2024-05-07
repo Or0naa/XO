@@ -6,7 +6,7 @@ import style from './style.module.scss'
 
 export default function Welcome() {
   return (
-    <div className={style.welcome} onClick={() => window.location.href = "/menu"}>
+    <div className={style.welcome} >
        <div className={style.ow1}> <O_index /></div>
        <div className={style.ow2}><X_index /></div>
     

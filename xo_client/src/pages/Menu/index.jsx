@@ -3,6 +3,7 @@ import style from './style.module.scss'
 import Button from '../../components/Button'
 import logo from '../../logo.png'
 import { useNavigate } from 'react-router-dom';
+import JoinGame from '../JoinGame';
 
 
 
@@ -14,6 +15,10 @@ export default function Menu() {
         navigate('/game');
       };
 
+      const joinGame = () => {
+        navigate('/join');
+      };
+
    
     return (
         <div className={style.menu}>
@@ -22,7 +27,7 @@ export default function Menu() {
                 <Button handleClick={handleClick} > Play Solo
                     {/* computer game */}
                 </Button>
-                <Button> Play With A Friend
+                <Button handleClick={joinGame}> Play With A Friend
                     {/* join game */}
                 </Button>
            

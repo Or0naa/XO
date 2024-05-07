@@ -3,6 +3,7 @@ import Board from '../../components/Board'
 import style from './style.module.scss'
 import Button from '../../components/Button'
 import PlayerView from '../../components/PlayerView'
+import { NavLink } from'react-router-dom'
 
 
 export default function GameBoard() {
@@ -17,7 +18,9 @@ export default function GameBoard() {
             </div>
             <div className={style.boardContainer}>
                 <Board /></div>
-            <div className={style.btn}> <Button handleClick={() => { console.log("back") }}>Back</Button></div>
+            <div className={style.btn}>
+                <NavLink to='/menu'>
+                    <Button> Back</Button></NavLink> </div>
         </div>
     )
 }

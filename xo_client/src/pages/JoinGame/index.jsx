@@ -3,14 +3,19 @@ import BackArrow from '../../components/BackArrow'
 import Title from '../../components/Title'
 import Frame from '../../components/Frame'
 import Button from '../../components/Button'
-import CreateGame from '../../pages/CreateGame'
 import style from './style.module.scss'
+import { NavLink } from 'react-router-dom'
 
 
 export default function JoinGame() {
+
+
+
   return (
-    <div>
-      <BackArrow />
+    <div className={style.joinGame}>
+        <NavLink to="/menu">
+      <BackArrow className={style.back}/>
+     </NavLink>
       <Title>
         Join A Game
       </Title>
@@ -18,12 +23,13 @@ export default function JoinGame() {
         <div >
         <input className={style.join} type="text" placeholder='Enter code game' /></div>
       </Frame>
-      <Button>
+    <div onClick={() => window.location.href = "/waiting"}>
+      <Button >
         Join
       </Button>
-      <hr />
-      <button>
-        <CreateGame />
+  </div>
+      <span>Or</span>
+      <button onClick={() => window.location.href = "/create"}>
         Create Game
       </button>
     </div>
