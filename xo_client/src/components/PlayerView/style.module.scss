@@ -1,0 +1,45 @@
+@import '../../vars.scss';
+
+.otherPlayer,
+.turnPlyer {
+    @extend .f-c;
+    flex-direction: column;
+    position: relative;
+    
+
+    .playerInfo {
+        @extend .f-c;
+        position: absolute;
+        bottom: -2px;
+
+
+        &>span {
+            background-color: black;
+            border-radius: 15%;
+            padding: 3px;
+        }
+    }
+
+    .playerName{
+        position: relative;
+        bottom: -10px;
+    }
+
+}
+
+.turnPlyer {
+    img {
+        width: 80%;
+        
+    }
+}
+
+.otherPlayer {
+    img {
+        width: 70%;
+    }
+
+    .playerInfo {
+        width: 80%;
+    }
+}

@@ -5,12 +5,14 @@
     --buttonC: #ffd414;
     --shadowC: #fbb500;
     --borderC: #b58506;
+    --boardSC: #ccfcfc;
 }
 
 $bgColor: var(--bc);
 $buttonColor: var(--buttonC);
 $shadowColor: var(--shadowC);
 $borderColor: var(--borderC);
+$boardSquareColor : var(--boardSC);
 
 *{
     font-family: 'Luckiest Guy', cursive;

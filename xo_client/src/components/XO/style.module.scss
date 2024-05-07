@@ -1,6 +1,9 @@
+@import '../../vars.scss';
+@import '../../mixin.scss';
+
 .X_O {
     font-size: 50px;
-    background-image: linear-gradient(to bottom,  #fcd015 80%, #fbb500 30%);
+    background-image: linear-gradient(to bottom,  $buttonColor 55%, $shadowColor 45%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     -webkit-text-stroke: 1px #000;
