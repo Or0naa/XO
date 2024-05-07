@@ -5,8 +5,9 @@ import PlayerDetails from "./pages/PlayerDetails";
 import Welcome from "./pages/Welcome";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Winning from "./pages/Winning";
-import Waiting from "./pages/Waiting";
+import WaitingJoin from "./pages/WaitingJoin";
 import GameBoard from "./pages/GameBoard";
+import CreateGame from "./pages/CreateGame";
 
 const router = createBrowserRouter([
   {
@@ -21,6 +22,8 @@ const router = createBrowserRouter([
     path: "/join",
     element: <JoinGame />,
   },
+  {path: "/create",
+element:<CreateGame/>},
   {
     path: "/player",
     element: <PlayerDetails />,
@@ -31,7 +34,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/waiting",
-    element: <Waiting />,
+    element: <WaitingJoin />,
   },
   {
     path: "/game",
