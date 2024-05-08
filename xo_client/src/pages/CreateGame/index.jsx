@@ -2,7 +2,7 @@ import React from 'react'
 import BackArrow from '../../components/BackArrow'
 import Frame from '../../components/Frame'
 import { NavLink } from 'react-router-dom'
-import barcode from '../../barcode.png'
+import barcodeliraz from '../../barcodeliraz.png'
 
 export default function CreateGame() {
  
@@ -19,7 +19,7 @@ export default function CreateGame() {
         <h1>Send message</h1>
       <a href='https://wa.link/lime1k' >This is your link </a> 
       <h1>Scan Barcode</h1>
-      <img src={barcode}></img>
+      <img src={barcodeliraz}></img>
         loader
 
         waiting for oponent
