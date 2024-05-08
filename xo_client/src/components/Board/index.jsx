@@ -5,14 +5,25 @@ import { check } from '../../functions/win';
 import X_index from '../XO/X_index';
 import O_index from '../XO/O_index';
 import { computerMove } from '../../functions/againstComputer';
+import { useGameStore } from '../../store';
 
 export default function Board() {
-    const [board, setBoard] = useState([]);
-    const [squares, setSquares] = useState(3);
-    const [turn, setTurn] = useState(true);
-    const [win, setWin] = useState(false);
-    const [winner, setWinner] = useState("");
-    const [gameType, setGameType] = useState( "computer");
+    const { game, setGame } = useGameStore(
+        state => ({
+            game: state.game,
+            setGame: state.setGame
+        })
+    );
+
+    const [squares, setSquares] = useState(game.squares);
+    const [turn, setTurn] = useState(game.currentPlayer == "X" ? true : false);
+    const [win, setWin] = useState(game.win);
+    const [winner, setWinner] = useState(game.winner);
+    const [gameType, setGameType] = useState(game.gameType);
+    const [currentPlayer, setCurrentPlayer] = useState(game.currentPlayer);
+    const [count, setCoung] = useState(squares * squares);
+
+
 
     useEffect(() => {
         // Create the board
@@ -24,72 +35,78 @@ export default function Board() {
             }
             newBoard.push(line); // Push the line of squares to the board
         }
-        setBoard(newBoard); // Update the board accordingly
-    }, [squares]);
+        if (gameType === "computer" && currentPlayer === "O") {
+            handleComputerMove(newBoard);
+            setCoung(count - 1);
+        }
+        setGame({ board: newBoard }) // Update the board accordingly
+    }, []);
+    console.log(count)
 
-    const handleSquare = (i, j, gameType) => {
+
+    const handleSquare = (i, j) => {
         if (win) return;
-        if (board[i][j] !== "") return;
-        const isBoardFull = board;
-        isBoardFull[i][j] = turn ? "X" : "O";
-        const draw = isBoardFull.flat().every(square => square !== "");
-        if (draw) {
-            setWin(true);
-            setWinner("Draw");
+        if (!turn) return; // אם התור אינו שייך לשחקן אנושי, תחזיר מיידית
+        if (game.board[i][j] !== "") return;
+        console.log(count)
+
+        const isBoardFull = game.board;
+        isBoardFull[i][j] = currentPlayer;
+        if (count == 1) {
+            const newBoard = [...game.board];
+            setGame({ win: true, winner: "Draw", board: newBoard });
             console.log("Draw");
             return;
         }
 
-        const value = turn ? "X" : "O";
-        const newBoard = [...board];
+        const value = currentPlayer;
+        console.log({ value })
+        const newBoard = [...game.board];
         newBoard[i][j] = value;
-        setBoard(newBoard);
-        // setTurn(!turn);
+        setGame({ board: newBoard });
+        setTurn(!turn);
+        setCoung(count - 1);
 
         const result = check(newBoard, value, i, j);
         if (result) {
-            setWin(true);
-            setWinner(value);
+            const newBoard = [...game.board];
+            setGame({ win: true, winner: value, board: newBoard });
             console.log("Win: ", value);
         } else {
-            if (gameType == "computer") {
-                handleComputerMove();
+            if (gameType === "computer") {
+                handleComputerMove(game.board);
             }
-            if (gameType == "friend") {
+            if (gameType === "friend") {
                 handleFriendMove();
             }
         }
     }
 
-    const handleComputerMove = async () => {
+    const handleComputerMove = async (currentBoard) => {
+        if (win) return; // אם המשחק כבר נגמר, אל תמשיך לבצע מהלך נוסף של המחשב
         await new Promise(resolve => setTimeout(resolve, 400));
-        const newBoard = computerMove(board);
-        setBoard(newBoard.board);
-        const result = check(board, "O", newBoard.i, newBoard.j);
+        const newBoard = computerMove(currentBoard); // השתמש בלוח הנוכחי שהועבר כארגומנט
+        const value = currentPlayer === "X" ? "O" : "X";
+        const result = check(newBoard.board, value, newBoard.i, newBoard.j);
         if (result) {
-            setWin(true);
-            setWinner("O");
-            console.log("Win: ", "O");
+            setGame({ win: true, winner: value, board: newBoard.board });
+            console.log("Win: ", value);
         }
+        setGame({ board: newBoard.board });
+        setTurn(true); // כאן אנחנו מגדירים שהתור של המחשב הוא השחקן הנוכחי
+        setCoung(count - 2);
     }
 
+
     const handleFriendMove = () => {
-        // const newBoard = socket(board);
-        // setBoard(newBoard.board);
-        // const result = check(board, "O", newBoard.i, newBoard.j);
-        // if (result) {
-        //     setWin(true);
-        //     setWinner("O");
-        //     console.log("Win: ", "O");
-        // }
-        setTurn(!turn);
-    
+        setTurn(!turn); // בכל לחיצה על ריבוע, אנחנו מחליפים את התור של השחקן
     }
+
 
     return (
         <Frame>
             <div className={styles.board}>
-                {board.map((line, i) => (
+                {game.board.map((line, i) => (
                     <div key={i} className={styles.board_row}>
                         {line.map((square, j) => (
                             <Frame key={j}>

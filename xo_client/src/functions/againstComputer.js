@@ -1,12 +1,19 @@
 //make the next move on tic tac toe
 import { check } from "./win";
-
-const ai = "O"; // סימון של המחשב
-const human = "X"; // סימון של השחקן
+import { useGameStore, useUserStore, useOponentStore } from '../store';
 
 
+const ai = useOponentStore.getState().opponent.sigh; // סימון של המחשב
+const human = useUserStore.getState().user.sigh; // סימון של השחקן
+
+const jeneralboard = useGameStore.getState().game.board
 
 export function computerMove(board) {
+    console.log(board)
+    console.log(jeneralboard)
+    if (board.length == 0) {
+        board = jeneralboard
+    };
     let newBoard = {}
     let computerMove = computerWins(board, newBoard);
     if (computerMove) return computerMove
