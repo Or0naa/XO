@@ -10,8 +10,17 @@
     -webkit-text-fill-color: transparent;
     -webkit-text-stroke: 1px #000;
     filter: drop-shadow(-3px 0px 0px rgba(0, 0, 0));
+    transition: all 0.3s ease-in-out; 
 
     &> img{
         width: 70%;
     }
 }
+.bigger {
+    font-size: 32px; // Adjust the bigger font size as needed
+  }
+  
+  .gray {
+    opacity: 0.5;
+  }
+  

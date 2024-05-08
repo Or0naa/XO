@@ -1,13 +1,22 @@
-import React, { useState } from 'react'
-import Frame from '../Frame'
+import React from 'react';
+import styles from './style.module.scss';
 
-export default function GrayXO({sigh}) {
-    const [sigh, setSigh] = useState('');
+export default function GrayXO({ sign, chosen }) {
   return (
-    <div>
-        <Frame>
-{sigh}
-        </Frame>
-    </div>
-  )
+    <div className={styles.sign}>
+    {sign === 'X' ? (
+      <img
+        src='./x.png'
+        alt="X"
+        className={`${styles.image} ${chosen ? styles.bigger : ''} ${!chosen ? styles.gray : ''}`}
+      />
+    ) : (
+      <img
+        src='./o.png'
+        alt="O"
+        className={`${styles.image} ${chosen ? styles.bigger : ''} ${!chosen ? styles.gray : ''}`}
+      />
+    )}
+  </div>
+);
 }
