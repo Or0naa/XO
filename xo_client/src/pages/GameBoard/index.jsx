@@ -41,8 +41,7 @@ export default function GameBoard() {
         <div className={style.yellowLine}>
           <div className={style.orangeBack}></div>
           <div className={style.players}>
-            <PlayerView jender="man" turn={true} winnings={"13"} sigh={"O"} name="Moshe" />
-            <PlayerView jender="woman" turn={false} winnings={"13"} sigh={"X"} name="Liron" />
+            <PlayerView />
           </div>
         </div>
         <div className={style.boardContainer}>

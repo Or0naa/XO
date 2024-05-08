@@ -4,16 +4,16 @@
 .board_row {
     @extend .f-c;
     flex-direction: row;
-    height: 70px;
     gap: 10px;
+    height: 17vw;
     margin-bottom: 10px;
     margin: 10px;
 }
 
 .square_frame {
     @extend .f-c;
-    width: 70px;
-    height: 68px;
+    width: 17vw;
+    aspect-ratio: 1/1;
     cursor: pointer;
     background-color: #ccfcfc;
     border-radius: 10px;
@@ -25,5 +25,7 @@
     background-color: #fff;
     flex-direction: column;
     border-radius: 10px;
+    min-width: 17rem;
+    min-height: 17rem;
 
 }
