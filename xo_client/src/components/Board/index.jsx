@@ -62,7 +62,7 @@ export default function Board() {
     }
 
     const handleComputerMove = async () => {
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise(resolve => setTimeout(resolve, 400));
         const newBoard = computerMove(board);
         setBoard(newBoard.board);
         const result = check(board, "O", newBoard.i, newBoard.j);

@@ -3,10 +3,12 @@ import Board from '../../components/Board'
 import style from './style.module.scss'
 import Button from '../../components/Button'
 import PlayerView from '../../components/PlayerView'
-import { NavLink } from'react-router-dom'
+import { NavLink, useNavigate } from'react-router-dom'
 
 
 export default function GameBoard() {
+    const nav = useNavigate();
+
     return (
         <div className={style.gameBoard}>
             <div className={style.yellowLine}>
@@ -19,8 +21,8 @@ export default function GameBoard() {
             <div className={style.boardContainer}>
                 <Board /></div>
             <div className={style.btn}>
-                <NavLink to='/menu'>
-                    <Button> Back</Button></NavLink> </div>
+                {/* <NavLink to='/menu'> */}
+                    <Button handleClick={()=>nav('/menu')}> Back</Button> </div>
         </div>
     )
 }
