@@ -2,12 +2,11 @@
 @import '../../mixin.scss';
 
 .X_O {
-    font-size: 50px;
-    background-image: linear-gradient(to bottom,  $buttonColor 55%, $shadowColor 45%);
+    font-size: 333%;
+    @extend .f-c;
+    background-image: linear-gradient(to bottom, $buttonColor 55%, $shadowColor 45%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     -webkit-text-stroke: 1px #000;
-    color: transparent;    
     filter: drop-shadow(-3px 0px 0px rgba(0, 0, 0));
-
 }

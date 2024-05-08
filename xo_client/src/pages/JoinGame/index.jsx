@@ -26,9 +26,9 @@ export default function JoinGame() {
         <input className={style.join} type="text" placeholder='Enter code game' /></div>
       </Frame>
     <div onClick={() => window.location.href = "/waiting"} className={style.littlejoin}>
-      <Button >
+      <button >
         Join
-      </Button>
+      </button>
   </div>
       <span>Or</span>
       <div onClick={() => window.location.href = "/create"}>
