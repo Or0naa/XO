@@ -48,8 +48,7 @@ export default function GameBoard() {
           <Board />
         </div>
         <div className={style.btn}>
-          {/* <NavLink to='/menu'> */}
-          <Button handleClick={() => nav('/menu')}> Back</Button>
+          <Button handleClick={()=> (window.history.back())}> Back</Button>
         </div>
       </div>
     );
