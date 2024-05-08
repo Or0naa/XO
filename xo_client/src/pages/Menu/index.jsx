@@ -1,9 +1,7 @@
 import React from 'react'
 import style from './style.module.scss'
 import Button from '../../components/Button'
-import logo from '../../logo.png'
 import { useNavigate } from 'react-router-dom';
-import JoinGame from '../JoinGame';
 
 
 
@@ -22,7 +20,7 @@ export default function Menu() {
    
     return (
         <div className={style.menu}>
-            <img src={logo}></img>
+            <img src='./logo.png'></img>
             <div className={style.buttons}>
                 <Button handleClick={handleClick} > Play Solo
                     {/* computer game */}
