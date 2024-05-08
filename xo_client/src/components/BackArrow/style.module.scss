@@ -1,15 +1,30 @@
+@import '../../vars.scss';
+
 .backArrowContainer {
 
-button {
-    background-color: #FCD015;
-    border-radius: 7px;
-border-bottom: 0.01px solid white;
-box-shadow: 0 4px 0 0 #FBB500;
-align-items: center;
-justify-content: center;
-padding-bottom: 3px;
-    .backArrow{
-        color: white;
-    }
-}}
+    button {
+        background-color: #FCD015;
+        border-radius: 7px;
+        border-bottom: 0.01px solid white;
+        box-shadow: 0 4px 0 0 #FBB500;
+        padding-bottom: 3px;
+        width: 60px;
+        height: 60px;
+        @extend .b;
+        position: absolute;
+        margin: 15px 0;
+        top: 0;
+        left: 10px;
+        cursor: pointer;
 
+        &>button {
+            @extend .b-button;
+        }
+
+        .backArrow {
+            color: white;
+            font-size: 50px;
+
+        }
+    }
+}

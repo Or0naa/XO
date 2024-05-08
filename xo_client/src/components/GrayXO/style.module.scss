@@ -1,24 +1,26 @@
+@import '../../vars.scss';
+ 
+.container {
+  @extend .f-c;
+}
  .sign {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  @extend .f-c;
+   background-color: $boardSquareColor;
+
 }
 
-.image {
-  width: 70%;
-  height: 70%;
-  transition: all 0.3s ease-in-out;
+.letter {
+  font-size: 2rem;
+  transition: transform 0.3s ease-in-out;
+  }
+
+.bigger{
+  transform: scale(1.5);
 }
 
-.bigger {
-image {
-  width: 75px; // Adjust the desired bigger size of the images
-  height: 75px; // Adjust the desired bigger size of the images
-}
-}
   .gray {
     opacity: 0.5;
-    background-color: transparent;
+    background-color: gray;
 
   }
   

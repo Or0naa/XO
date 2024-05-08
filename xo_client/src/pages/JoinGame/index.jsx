@@ -13,11 +13,9 @@ export default function JoinGame() {
 
   return (
     <div className={style.joinGame}>
-      <nav>
-        <NavLink to="/menu">
+   
       <BackArrow className={style.back}/>
-     </NavLink>
-     </nav>
+   
       <Title>
         Join A Game
       </Title>
