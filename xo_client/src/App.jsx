@@ -8,6 +8,7 @@ import Winning from "./pages/Winning";
 import WaitingJoin from "./pages/WaitingJoin";
 import GameBoard from "./pages/GameBoard";
 import CreateGame from "./pages/CreateGame";
+import ChoosePlayer from "./pages/ChoosePlayer";
 
 const router = createBrowserRouter([
   {
@@ -23,10 +24,15 @@ const router = createBrowserRouter([
     element: <JoinGame />,
   },
   {path: "/create",
-element:<CreateGame/>},
+element:<CreateGame/>
+},
   {
     path: "/player",
     element: <PlayerDetails />,
+  },
+  {
+    path: "/choose",
+    element: <ChoosePlayer />,
   },
   {
     path: "/win",
