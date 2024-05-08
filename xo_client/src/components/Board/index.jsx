@@ -94,7 +94,7 @@ export default function Board() {
                         {line.map((square, j) => (
                             <Frame key={j}>
                                 <div className={styles.square_frame} onClick={() => handleSquare(i, j, gameType)}>
-                                    {square === "X" ? <X_index /> : square === "O" ? <O_index /> : <X_index />}
+                                    {square === "X" ? <X_index /> : square === "O" ? <O_index /> : ""}
                                 </div>
                             </Frame>
                         ))}
