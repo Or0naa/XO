@@ -3,5 +3,9 @@
 
 .buttonClass {
     @extend .b;
+    &> button {
+        @extend .b-button;
+        width: 80vw;
+    }
 
 }

@@ -17,7 +17,9 @@ export default function PlayerView({ jender, name, turn, sigh, winnings }) {
         <div className={turn ? style.turnPlyer : style.otherPlayer}>
             <img src={playerImg} alt="playerImg" style={{ borderColor: '#b58506', borderWidth: "3px", borderRadius: "50%", border: "solid" }} />
             <div className={style.playerInfo}>
-                {sigh == 'X' ? <X_index /> : <O_index />}
+                <div className={style.sigh}>
+                    {sigh == 'X' ? <X_index /> : <O_index />}
+                </div>
                 <span>wins: {winnings}</span>
             </div>
             <div className={style.playerName}>{name}</div>

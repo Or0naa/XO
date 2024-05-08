@@ -33,12 +33,13 @@ $boardSquareColor : var(--boardSC);
     flex-direction: column;
     justify-content: center;
     align-items: center;
+}
 
-    & > Button {
+.b-button {
         background-color: $buttonColor;
         -webkit-text-stroke: 2px $borderColor;
         border-radius: 150px;
-        width: 80vw;
+        // width: 80vw;
         margin: 20px;
         padding: 15px;
         font-size: 30px;
@@ -49,5 +50,5 @@ $boardSquareColor : var(--boardSC);
         align-items: center;
         justify-content: center;
         padding-bottom: 8px;
-    }
+    
 }
