@@ -41,15 +41,14 @@ export default function Board() {
         }
         setGame({ board: newBoard }) // Update the board accordingly
     }, []);
-    console.log(count)
 
+    
 
     const handleSquare = (i, j) => {
         if (win) return;
         if (!turn) return; // אם התור אינו שייך לשחקן אנושי, תחזיר מיידית
         if (game.board[i][j] !== "") return;
-        console.log(count)
-
+ 
         const isBoardFull = game.board;
         isBoardFull[i][j] = currentPlayer;
         if (count == 1) {
@@ -60,7 +59,7 @@ export default function Board() {
         }
 
         const value = currentPlayer;
-        console.log({ value })
+        // console.log({ value })
         const newBoard = [...game.board];
         newBoard[i][j] = value;
         setGame({ board: newBoard });
