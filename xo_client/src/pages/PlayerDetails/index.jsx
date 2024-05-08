@@ -11,9 +11,11 @@ export default function PlayerDetails() {
   
     return (
         <div className={styles.playerDetails}>
+            <nav>
           <NavLink to="/menu">
       <BackArrow />
      </NavLink>
+           </nav>
             <img src={logo} alt="" />
             <Frame>
                 <input type="text" placeholder='Enter Player Name' />

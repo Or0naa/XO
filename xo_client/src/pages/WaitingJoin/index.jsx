@@ -9,9 +9,11 @@ export default function WaitingJoin() {
 
     return (
         <div className={style.hi}>
+            <nav>
              <NavLink to="/menu">
       <BackArrow />
      </NavLink>
+     </nav>
             <div className={style.hand}></div>
             <div className={style.hand}></div>
             <div className={style.hand}></div>
