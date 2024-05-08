@@ -1,4 +1,4 @@
-
+@import '../../vars.scss';
 
 .joinGame {
     display: flex;
@@ -10,6 +10,13 @@
     .back {
         text-align: left;
     }
+     .littlejoin{
+        width: 100px;
+    }
+    // button {
+    //     @extend .b
+    // }
+   
 
 
 }
