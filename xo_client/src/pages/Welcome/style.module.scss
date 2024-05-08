@@ -21,7 +21,7 @@
       position: absolute;
       top: 10vh; /* Changed from top: 10% */
       left: 15vw; /* Changed from left: 15% */
-      transform: translate(-50%, -50%) rotate(-45deg) scale(1.7);
+      transform: translate(-50%, -50%) rotate(-45deg) scale(1);
       filter: blur(2px);
       
     }
@@ -30,15 +30,15 @@
       position: absolute;
       top: 18vh; /* Changed from top: 10% */
       right: 25vw; /* Changed from right: 15% */
-      transform: translate(50%, -50%) rotate(25deg) scale(3.5);
+      transform: translate(50%, -50%) rotate(25deg) scale(2);
       filter: blur(2px);
     }
   
     .ow3 {
       position: absolute;
-      bottom: 27vh; /* Changed from bottom: 10% */
+      bottom: 20vh; /* Changed from bottom: 10% */
       left: 15vw; /* Changed from left: 15% */
-      transform: translate(-50%, 50%) rotate(-25deg) scale(2.5);
+      transform: translate(-50%, 50%) rotate(-25deg) scale(1.5);
       filter: blur(1px);
     }
   
@@ -46,7 +46,7 @@
       position: absolute;
       bottom: 18vh; /* Changed from bottom: 10% */
       right: 15vw; /* Changed from right: 10% */
-      transform: translate(50%, 50%) scale(2.1);
+      transform: translate(50%, 50%) scale(1.5);
       filter: blur(2px);
     }
   }

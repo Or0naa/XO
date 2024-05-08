@@ -1,0 +1,24 @@
+ .sign {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.image {
+  width: 70%;
+  height: 70%;
+  transition: all 0.3s ease-in-out;
+}
+
+.bigger {
+image {
+  width: 75px; // Adjust the desired bigger size of the images
+  height: 75px; // Adjust the desired bigger size of the images
+}
+}
+  .gray {
+    opacity: 0.5;
+    background-color: transparent;
+
+  }
+  
