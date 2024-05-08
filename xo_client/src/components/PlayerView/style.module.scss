@@ -1,52 +1,39 @@
 @import '../../vars.scss';
 
 
-.otherPlayer,
-.turnPlyer {
+.player {
     @extend .f-c;
     flex-direction: column;
     position: relative;
 
 
+    &>img {
+        width: 90px;
+        background-color: aliceblue;
+        border-radius: 50%;
+        border: 3px $borderColor solid;
+    }
+
+
     .playerInfo {
         @extend .f-c;
         position: absolute;
-        bottom: -2px;
+        bottom: -15px;
 
 
-        &>span {
+        .wins {
             background-color: black;
             border-radius: 15%;
             padding: 3px;
             @extend .f-c;
+            flex-direction: row;
 
         }
     }
 
     .playerName {
         position: relative;
-        bottom: -10px;
+        bottom: -30px;
     }
 
-}
-
-.turnPlyer {
-    img {
-        width: 80%;
-
-    }
-}
-
-.otherPlayer {
-    img {
-        width: 70%;
-    }
-
-    .playerInfo {
-        width: 300%;
-        .sigh {
-            width: 150px;
-            height: 150px;
-        }
-    }
 }
