@@ -36,6 +36,10 @@ export default function Winning({ winner }) {
     };
   }, []);
 
+  const isXwin = game.winner == 'X';
+  const isOwin = game.winner == 'O';
+  console.log("x",isXwin,'o',isOwin)
+
 
   return (
     <div className={styles.winning}>
@@ -43,15 +47,15 @@ export default function Winning({ winner }) {
       <Confetti width={window.innerWidth} height={window.innerHeight} />
 
       {/* Winning message and buttons */}
-      <h2>{winner} wins!</h2>
+      <h2>{game.winner} wins!</h2>
       <Frame>
         <div className={styles.board}>
           {game.board.map((row, rowIndex) => (
             <div key={rowIndex} className={styles.board_row}>
               {row.map((cell, cellIndex) => (
                 <Frame>
-                  <div key={cellIndex} className={cell.value=="O" ? styles.square_frame : styles.gray}>
-                    {cell.value == "X" ? <X_index isActive={false} /> : cell.value == "O" ? <O_index isActive={cell.isActive} /> : ""}
+                  <div key={cellIndex} className={cell.value==game.winner ? styles.square_frame : styles.gray}>
+                    {cell.value == "X" ? <X_index isActive={isXwin} /> : cell.value == "O" ? <O_index isActive={isOwin} /> : ""}
                   </div>
                 </Frame>
               ))}

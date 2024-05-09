@@ -5,7 +5,7 @@ import { check } from '../../functions/win';
 import X_index from '../XO/X_index';
 import O_index from '../XO/O_index';
 import { computerMove } from '../../functions/againstComputer';
-import { useGameStore } from '../../store';
+import { useGameStore, useUserStore, useOponentStore } from '../../store';
 import { useNavigate } from 'react-router-dom';
 
 export default function Board() {
@@ -16,10 +16,23 @@ export default function Board() {
         })
     );
 
+    const { user, setUser } = useUserStore(
+        state => ({
+            user: state.user,
+            setUser: state.setUser
+        })
+    );
+    const { opponent, setOpponent } = useOponentStore(
+        state => ({
+            opponent: state.opponent,
+            setOpponent: state.setOpponent
+        })
+    );
+
+    // console.log(user, opponent)
     const nav = useNavigate();
 
     const [squares, setSquares] = useState(game.squares);
-    const [turn, setTurn] = useState(game.currentPlayer == "X" ? true : false);
     const [win, setWin] = useState(game.win);
     const [winner, setWinner] = useState(game.winner);
     const [gameType, setGameType] = useState(game.gameType);
@@ -34,79 +47,81 @@ export default function Board() {
         for (let i = 0; i < squares; i++) {
             const line = [];
             for (let j = 0; j < squares; j++) {
-                line.push({value:""}); // Initialize the board with empty squares
+                line.push({ value: "" }); // Initialize the board with empty squares
             }
             newBoard.push(line); // Push the line of squares to the board
         }
-        if (gameType === "computer" && currentPlayer === "O") {
+        if (gameType === "computer" && user.sigh === "O") {
             handleComputerMove(newBoard);
             setCoung(count - 1);
         }
         setGame({ board: newBoard }) // Update the board accordingly
     }, []);
 
-    
+    // console.log("currentPlayer", currentPlayer)
 
     const handleSquare = (i, j) => {
-        if (win) return;
-        if (!turn) return; // אם התור אינו שייך לשחקן אנושי, תחזיר מיידית
+        if (game.win) return;
         if (game.board[i][j].value !== "") return;
- 
-        if (count == 1) {
+        if (currentPlayer != user.sigh && gameType != "computer") return;
+
+        if (count <= 1) {
             const newBoard = [...game.board];
+            newBoard[i][j].value = user.value;
             setGame({ win: true, winner: "Draw", board: newBoard });
             nav('/win')
             console.log("Draw");
             return;
         }
 
-        const currentValue = currentPlayer;
         const newBoard = [...game.board];
-        newBoard[i][j].value = currentValue;
+        newBoard[i][j].value = user.sigh;
         setGame({ board: newBoard });
-        setTurn(!turn);
         setCoung(count - 1);
 
-        const result = check(newBoard, currentValue, i, j);
+        const result = check(newBoard, user.sigh, i, j);
         console.log(result)
-        if (result=="row"|| result=="colomn"||result=="diagonaldown"||result=="diagonalup") {
+        if (result == "row" || result == "colomn" || result == "diagonaldown" || result == "diagonalup") {
             const newBoard = [...game.board];
-            setGame({ win: true, winner: currentValue, board: newBoard });
-            console.log("Win: ", currentValue);
+            setGame({ win: true, winner: user.sigh, board: newBoard });
+            console.log("Win: ", user.sigh);
             nav('/win')
         } else {
             if (gameType === "computer") {
                 handleComputerMove(game.board);
+
             }
             if (gameType === "friend") {
-                handleFriendMove();
+                setGame({ currentPlayer: (currentPlayer == opponent.sigh) });
             }
         }
     }
-console.log(game.board)
+    // console.log(game.board)
     const handleComputerMove = async (currentBoard) => {
+
         if (win) return; // אם המשחק כבר נגמר, אל תמשיך לבצע מהלך נוסף של המחשב
         await new Promise(resolve => setTimeout(resolve, 400));
-        const newBoard = computerMove(currentBoard); // השתמש בלוח הנוכחי שהועבר כארגומנט
+        const computerSign = opponent.sigh;
+        console.log({ computerSign })
 
-        const oponnentValue = currentPlayer === "X" ? "O" : "X";
+        const newBoard = computerMove(currentBoard, computerSign, user.sigh); // השתמש בלוח הנוכחי שהועבר כארגומנט
+        console.log("newBoard", newBoard)
 
-        const result = check(newBoard.board, oponnentValue, newBoard.i, newBoard.j);
-        
-        if (result=="row"|| result=="colomn"|| result=="diagonaldown"|| result=="diagonalup") {
-            const newBoard = [...game.board];
-            setGame({ win: true, winner: oponnentValue, board: newBoard.board });
-            console.log("Win: ", oponnentValue);
+        const result = check(newBoard.board, computerSign, newBoard.i, newBoard.j);
+        if (result == "row" || result == "colomn" || result == "diagonaldown" || result == "diagonalup") {
+
+            setGame({ win: true, winner: computerSign, board: newBoard.board });
             nav('/win')
         }
         setGame({ board: newBoard.board });
-        setTurn(true); // כאן אנחנו מגדירים שהתור של המחשב הוא השחקן הנוכחי
         setCoung(count - 2);
     }
+    console.log("game: ", game);
+
 
 
     const handleFriendMove = () => {
-        setTurn(!turn); // בכל לחיצה על ריבוע, אנחנו מחליפים את התור של השחקן
+        console.log("תחברו אותי כבר לסוקט")
     }
 
 
@@ -118,7 +133,9 @@ console.log(game.board)
                         {line.map((square, j) => (
                             <Frame key={j}>
                                 <div className={styles.square_frame} onClick={() => handleSquare(i, j, gameType)}>
-                                {square.value=="X"? <X_index />: square.value=="O"? <O_index  />: ""}
+                                    {square.value == "X" ? <X_index /> : square.value == "O" ? <O_index /> :
+                                    square.value==undefined&& opponent.sigh=="O"? <O_index/> :
+                                    square.value==undefined&& opponent.sigh=="X"? <X_index/> : ""}
                                 </div>
                             </Frame>
                         ))}

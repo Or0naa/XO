@@ -6,26 +6,55 @@ import BackArrow from '../../components/BackArrow';
 import Button from '../../components/Button';
 import { FiSettings } from "react-icons/fi";
 import { useNavigate } from 'react-router-dom';
-import { useGameStore } from '../../store';
+import { useGameStore, useUserStore, useOponentStore } from '../../store';
 
 export default function ChoosePlayer() {
 
   const nav = useNavigate();
   const [chosenSign, setChosenSign] = useState(null);
-
-  const handleSignClick = (sign) => {
-    if (sign === chosenSign) {
-      return;
-    }
-    setChosenSign(sign === chosenSign ? null : sign);
-  };
-
   const { game, setGame } = useGameStore(
     state => ({
       game: state.game,
       setGame: state.setGame
     })
   );
+  const { user, setUser } = useUserStore(
+    state => ({
+      user: state.user,
+      setUser: state.setUser
+    })
+  );
+  const { opponent, setOpponent } = useOponentStore(
+    state => ({
+      opponent: state.opponent,
+      setOpponent: state.setOpponent
+    })
+  );
+  const handleSignClick = (sign) => {
+    if (sign === chosenSign) {
+      return;
+    }
+    setChosenSign(sign === chosenSign ? null : sign);
+    const newUser = {
+      name: user.name,
+      sigh: sign,
+      avatar: './female.png',
+      wins: '2',
+    }
+
+    setUser(newUser);
+    const newOpponent = {
+      name: opponent.name,
+      sigh: sign === 'X' ? 'O' : 'X',
+      avatar: './robot.png',
+      wins: '6',
+    }
+    setOpponent(newOpponent);
+
+  };
+
+
+
 
   const navigate = useNavigate();
 
@@ -58,7 +87,7 @@ export default function ChoosePlayer() {
 
               <GrayXO sign="X" chosen={chosenSign === 'X'} />
 
-              
+
             </div>
             <div
               className={`${styles.signButton} ${chosenSign === 'O' ? styles.selected : ''}`}
