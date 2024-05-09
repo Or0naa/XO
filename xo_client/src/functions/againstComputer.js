@@ -9,8 +9,8 @@ const human = useUserStore.getState().user.sigh; // סימון של השחקן
 const jeneralboard = useGameStore.getState().game.board
 
 export function computerMove(board) {
-    console.log(board)
-    console.log(jeneralboard)
+    // console.log(board)
+    // console.log(jeneralboard)
     if (board.length == 0) {
         board = jeneralboard
     };
@@ -28,8 +28,8 @@ function computerWins(board, newBoard) {
     let j = 0;
     let foundMove = false;
     while (i < board.length && !foundMove) {
-        if (board[i][j] === '') {
-            board[i][j] = ai;
+        if (board[i][j].value === '') {
+            board[i][j].value = ai;
             if (check(board, ai, i, j)) {
                 newBoard.board = board;
                 newBoard.i = i;
@@ -37,7 +37,7 @@ function computerWins(board, newBoard) {
                 foundMove = true;
             }
             if (!foundMove) {
-                board[i][j] = ''
+                board[i][j].value = ''
             }
         }
         j++;
@@ -54,12 +54,12 @@ function computerBestMove(board, newBoard) {
     let j = 0;
     let foundMove = false;
     while (i < board.length && !foundMove) {
-        if (board[i][j] === '') {
-            board[i][j] = human;
+        if (board[i][j].value === '') {
+            board[i][j].value = human;
             if (!check(board, human, i, j)) {
-                board[i][j] = '';
+                board[i][j].value = '';
             } else {
-                board[i][j] = ai;
+                board[i][j].value = ai;
                 newBoard.board = board;
                 newBoard.i = i;
                 newBoard.j = j;
@@ -77,11 +77,11 @@ function computerBestMove(board, newBoard) {
 }
 
 function randomMove(board, newBoard) {
-    let random = Math.floor(Math.random() * 9);
-    let i = Math.floor(random / 3);
-    let j = random % 3;
-    if (board[i][j] === '') {
-        board[i][j] = ai;
+    let random = Math.floor(Math.random() * board.length*board.length);
+    let i = Math.floor(random / board.length);
+    let j = random % board.length;
+    if (board[i][j].value === '') {
+        board[i][j].value = ai;
         newBoard.board = board;
         newBoard.i = i;
         newBoard.j = j;

@@ -1,22 +1,24 @@
 @import '../../vars.scss';
 @import '../../mixin.scss';
 
+
 .board_row {
     @extend .f-c;
     flex-direction: row;
     gap: 10px;
-    height: 17vw;
+    height: fit-content; /* גודל ריבוע בין 17vw לבין 5vw */
     margin-bottom: 10px;
     margin: 10px;
 }
 
 .square_frame {
     @extend .f-c;
-    width: 17vw;
+    width: calc(17rem/4);
     aspect-ratio: 1/1;
     cursor: pointer;
     background-color: #ccfcfc;
     border-radius: 10px;
+
 
 }
 
