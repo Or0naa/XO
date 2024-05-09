@@ -47,7 +47,7 @@ export default function Winning({ winner }) {
       <Confetti width={window.innerWidth} height={window.innerHeight} />
 
       {/* Winning message and buttons */}
-      <h2>{game.winner} wins!</h2>
+     {game.winner == "Draw" ? <h2>Draw!</h2> : <h2>{game.winner} wins!</h2>}
       <Frame>
         <div className={styles.board}>
           {game.board.map((row, rowIndex) => (

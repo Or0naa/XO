@@ -36,6 +36,10 @@ export default function GameBoard() {
       );
     }
 
+    const handleClick=()=>{
+      nav('/choose')
+    }
+
     return (
       <div className={style.gameBoard}>
         <div className={style.yellowLine}>
@@ -48,7 +52,7 @@ export default function GameBoard() {
           <Board />
         </div>
         <div className={style.btn}>
-          <Button handleClick={()=> (window.history.back())}> Back</Button>
+          <Button handleClick={handleClick}> Back</Button>
         </div>
       </div>
     );

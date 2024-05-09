@@ -39,7 +39,7 @@ export default function ChoosePlayer() {
       name: user.name,
       sigh: sign,
       avatar: './female.png',
-      wins: '2',
+      wins: '0',
     }
 
     setUser(newUser);
@@ -47,7 +47,7 @@ export default function ChoosePlayer() {
       name: opponent.name,
       sigh: sign === 'X' ? 'O' : 'X',
       avatar: './robot.png',
-      wins: '6',
+      wins: '0',
     }
     setOpponent(newOpponent);
 
