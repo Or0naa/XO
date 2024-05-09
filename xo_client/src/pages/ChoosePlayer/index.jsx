@@ -6,10 +6,11 @@ import BackArrow from '../../components/BackArrow';
 import Button from '../../components/Button';
 import { FiSettings } from "react-icons/fi";
 import { useNavigate } from 'react-router-dom';
+import { useGameStore } from '../../store';
 
 export default function ChoosePlayer() {
 
-    const nav = useNavigate();
+  const nav = useNavigate();
   const [chosenSign, setChosenSign] = useState(null);
 
   const handleSignClick = (sign) => {
@@ -19,33 +20,57 @@ export default function ChoosePlayer() {
     setChosenSign(sign === chosenSign ? null : sign);
   };
 
+  const { game, setGame } = useGameStore(
+    state => ({
+      game: state.game,
+      setGame: state.setGame
+    })
+  );
+
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    setGame({
+      win: false,
+      winner: null,
+      board: [],
+      squares: 3,
+      currentPlayer: 'X',
+      gameType: 'computer'
+    })
+    navigate('/game')
+  };
+
   return (
     <div className={styles.bigcontainer}>
-    <BackArrow />
-        <div className={styles.settings}>
-            <button onClick={()=>nav('/player')}><FiSettings/></button></div>
- 
-    <div className={styles.container}>
-      <h2 className={styles.choose}>Choose Player</h2> 
-      <Frame>
-     <div className={styles.buttonContainer}>   
-        <div
-          className={`${styles.signButton} ${chosenSign === 'X' ? styles.selected : ''}`}
-          onClick={() => handleSignClick('X')}
-        >
-          <GrayXO sign="X" chosen={chosenSign === 'X'} />
-        </div>
-        <div
-          className={`${styles.signButton} ${chosenSign === 'O' ? styles.selected : ''}`}
-          onClick={() => handleSignClick('O')}
-        >
-          <GrayXO sign="O" chosen={chosenSign === 'O'} />
-        </div>
-      </div></Frame>
-      <br/>
-  <Button handleClick={() => nav('/game')}>
-    <h2>Let's Play</h2></Button> </div>
-   
-   </div>
+      <BackArrow />
+      <div className={styles.settings}>
+        <button onClick={() => nav('/player')}><FiSettings /></button></div>
+
+      <div className={styles.container}>
+        <h2 className={styles.choose}>Choose Player</h2>
+        <Frame>
+          <div className={styles.buttonContainer}>
+            <div
+              className={`${styles.signButton} ${chosenSign === 'X' ? styles.selected : ''}`}
+              onClick={() => handleSignClick('X')}
+            >
+
+              <GrayXO sign="X" chosen={chosenSign === 'X'} />
+
+              
+            </div>
+            <div
+              className={`${styles.signButton} ${chosenSign === 'O' ? styles.selected : ''}`}
+              onClick={() => handleSignClick('O')}
+            >
+              <GrayXO sign="O" chosen={chosenSign === 'O'} />
+            </div>
+          </div></Frame>
+        <br />
+        <Button handleClick={handleClick}>
+          <h2>Let's Play</h2></Button> </div>
+
+    </div>
   );
 }

@@ -69,7 +69,7 @@ export default function Board() {
 
         const result = check(newBoard, currentValue, i, j);
         console.log(result)
-        if (result) {
+        if (result=="row"|| result=="colomn"||result=="diagonaldown"||result=="diagonalup") {
             const newBoard = [...game.board];
             setGame({ win: true, winner: currentValue, board: newBoard });
             console.log("Win: ", currentValue);
@@ -88,12 +88,15 @@ console.log(game.board)
         if (win) return; // אם המשחק כבר נגמר, אל תמשיך לבצע מהלך נוסף של המחשב
         await new Promise(resolve => setTimeout(resolve, 400));
         const newBoard = computerMove(currentBoard); // השתמש בלוח הנוכחי שהועבר כארגומנט
-        const value = currentPlayer === "X" ? "O" : "X";
-        const result = check(newBoard.board, value, newBoard.i, newBoard.j);
+
+        const oponnentValue = currentPlayer === "X" ? "O" : "X";
+
+        const result = check(newBoard.board, oponnentValue, newBoard.i, newBoard.j);
+        
         if (result=="row"|| result=="colomn"|| result=="diagonaldown"|| result=="diagonalup") {
             const newBoard = [...game.board];
-            setGame({ win: true, winner: value, board: newBoard.board });
-            console.log("Win: ", value);
+            setGame({ win: true, winner: oponnentValue, board: newBoard.board });
+            console.log("Win: ", oponnentValue);
             nav('/win')
         }
         setGame({ board: newBoard.board });
@@ -115,7 +118,7 @@ console.log(game.board)
                         {line.map((square, j) => (
                             <Frame key={j}>
                                 <div className={styles.square_frame} onClick={() => handleSquare(i, j, gameType)}>
-                                {square.value=="X"? <X_index isActive={true} />: square.value=="O"? <O_index isActive={true}  />: ""}
+                                {square.value=="X"? <X_index />: square.value=="O"? <O_index  />: ""}
                                 </div>
                             </Frame>
                         ))}
