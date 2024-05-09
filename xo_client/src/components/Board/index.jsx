@@ -67,7 +67,7 @@ export default function Board() {
 
         if (count <= 1) {
             const newBoard = [...game.board];
-            newBoard[i][j].value = user.value;
+            newBoard[i][j].value = user.sigh;
             setGame({ win: true, winner: "Draw", board: newBoard });
             nav('/win')
             console.log("Draw");
@@ -84,6 +84,12 @@ export default function Board() {
         if (result == "row" || result == "colomn" || result == "diagonaldown" || result == "diagonalup") {
             const newBoard = [...game.board];
             setGame({ win: true, winner: user.sigh, board: newBoard });
+            setUser({
+                name: user.name,
+                avatar: user.avatar,
+                sigh: user.sigh,
+                wins: Number(user.wins) + 1
+            })
             console.log("Win: ", user.sigh);
             nav('/win')
         } else {
@@ -109,8 +115,15 @@ export default function Board() {
 
         const result = check(newBoard.board, computerSign, newBoard.i, newBoard.j);
         if (result == "row" || result == "colomn" || result == "diagonaldown" || result == "diagonalup") {
+            const updatedBoard = [...newBoard.board];
+            setOpponent({
+                name: opponent.name,
+                avatar: opponent.avatar,
+                sigh: computerSign,
+                wins: Number(opponent.wins) + 1
+            })
 
-            setGame({ win: true, winner: computerSign, board: newBoard.board });
+            setGame({ win: true, winner: computerSign, board: updatedBoard });
             nav('/win')
         }
         setGame({ board: newBoard.board });
@@ -134,8 +147,8 @@ export default function Board() {
                             <Frame key={j}>
                                 <div className={styles.square_frame} onClick={() => handleSquare(i, j, gameType)}>
                                     {square.value == "X" ? <X_index /> : square.value == "O" ? <O_index /> :
-                                    square.value==undefined&& opponent.sigh=="O"? <O_index/> :
-                                    square.value==undefined&& opponent.sigh=="X"? <X_index/> : ""}
+                                        square.value == undefined && opponent.sigh == "O" ? <O_index /> :
+                                            square.value == undefined && opponent.sigh == "X" ? <X_index /> : ""}
                                 </div>
                             </Frame>
                         ))}
