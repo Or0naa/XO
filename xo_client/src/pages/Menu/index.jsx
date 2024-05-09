@@ -10,7 +10,7 @@ export default function Menu() {
     const navigate = useNavigate();
     
     const handleClick = () => {
-        navigate('/game');
+        navigate('/choose');
       };
 
       const joinGame = () => {

@@ -6,6 +6,7 @@ import X_index from '../XO/X_index';
 import O_index from '../XO/O_index';
 import { computerMove } from '../../functions/againstComputer';
 import { useGameStore } from '../../store';
+import { useNavigate } from 'react-router-dom';
 
 export default function Board() {
     const { game, setGame } = useGameStore(
@@ -14,6 +15,8 @@ export default function Board() {
             setGame: state.setGame
         })
     );
+
+    const nav = useNavigate();
 
     const [squares, setSquares] = useState(game.squares);
     const [turn, setTurn] = useState(game.currentPlayer == "X" ? true : false);
@@ -31,7 +34,7 @@ export default function Board() {
         for (let i = 0; i < squares; i++) {
             const line = [];
             for (let j = 0; j < squares; j++) {
-                line.push(""); // Initialize the board with empty squares
+                line.push({value:""}); // Initialize the board with empty squares
             }
             newBoard.push(line); // Push the line of squares to the board
         }
@@ -47,30 +50,30 @@ export default function Board() {
     const handleSquare = (i, j) => {
         if (win) return;
         if (!turn) return; // אם התור אינו שייך לשחקן אנושי, תחזיר מיידית
-        if (game.board[i][j] !== "") return;
+        if (game.board[i][j].value !== "") return;
  
-        const isBoardFull = game.board;
-        isBoardFull[i][j] = currentPlayer;
         if (count == 1) {
             const newBoard = [...game.board];
             setGame({ win: true, winner: "Draw", board: newBoard });
+            nav('/win')
             console.log("Draw");
             return;
         }
 
-        const value = currentPlayer;
-        // console.log({ value })
+        const currentValue = currentPlayer;
         const newBoard = [...game.board];
-        newBoard[i][j] = value;
+        newBoard[i][j].value = currentValue;
         setGame({ board: newBoard });
         setTurn(!turn);
         setCoung(count - 1);
 
-        const result = check(newBoard, value, i, j);
+        const result = check(newBoard, currentValue, i, j);
+        console.log(result)
         if (result) {
             const newBoard = [...game.board];
-            setGame({ win: true, winner: value, board: newBoard });
-            console.log("Win: ", value);
+            setGame({ win: true, winner: currentValue, board: newBoard });
+            console.log("Win: ", currentValue);
+            nav('/win')
         } else {
             if (gameType === "computer") {
                 handleComputerMove(game.board);
@@ -80,16 +83,18 @@ export default function Board() {
             }
         }
     }
-
+console.log(game.board)
     const handleComputerMove = async (currentBoard) => {
         if (win) return; // אם המשחק כבר נגמר, אל תמשיך לבצע מהלך נוסף של המחשב
         await new Promise(resolve => setTimeout(resolve, 400));
         const newBoard = computerMove(currentBoard); // השתמש בלוח הנוכחי שהועבר כארגומנט
         const value = currentPlayer === "X" ? "O" : "X";
         const result = check(newBoard.board, value, newBoard.i, newBoard.j);
-        if (result) {
+        if (result=="row"|| result=="colomn"|| result=="diagonaldown"|| result=="diagonalup") {
+            const newBoard = [...game.board];
             setGame({ win: true, winner: value, board: newBoard.board });
             console.log("Win: ", value);
+            nav('/win')
         }
         setGame({ board: newBoard.board });
         setTurn(true); // כאן אנחנו מגדירים שהתור של המחשב הוא השחקן הנוכחי
@@ -110,7 +115,7 @@ export default function Board() {
                         {line.map((square, j) => (
                             <Frame key={j}>
                                 <div className={styles.square_frame} onClick={() => handleSquare(i, j, gameType)}>
-                                    {square === "X" ? <X_index /> : square === "O" ? <O_index /> : ""}
+                                {square.value=="X"? <X_index isActive={true} />: square.value=="O"? <O_index isActive={true}  />: ""}
                                 </div>
                             </Frame>
                         ))}
