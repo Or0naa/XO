@@ -8,7 +8,7 @@ import Frame from '../../components/Frame';
 import X_index from '../../components/XO/X_index';
 import O_index from '../../components/XO/O_index';
 
-export default function Winning({ winner, restartGame }) {
+export default function Winning({ winner }) {
   const nav = useNavigate();
   const { game, setGame } = useGameStore(
     state => ({
@@ -16,6 +16,18 @@ export default function Winning({ winner, restartGame }) {
       setGame: state.setGame
     })
   );
+
+  const restartGame = ()=>{
+    setGame({
+      win: false,
+      winner: null,
+      board: [],
+      squares: 3,
+      currentPlayer:  'X',
+      gameType: 'computer'
+    })
+    nav('/game')
+  }
 
   // Add confetti effect when the component mounts
   useEffect(() => {
@@ -34,15 +46,17 @@ export default function Winning({ winner, restartGame }) {
       <h2>{winner} wins!</h2>
       <Frame>
         <div className={styles.board}>
-        {game.board.map((row, rowIndex) => (
-          <div key={rowIndex} className={styles.board_row}>
-            {row.map((cell, cellIndex) => (
-              <Frame> <div key={cellIndex} className={cellIndex.isActive? styles.square_frame: styles.gray}>
-                {cell.value=="X"? <X_index isActive={cell.isActive} />: cell.value=="O"? <O_index isActive={cell.isActive} />: ""}
-              </div></Frame>
-            ))}
-          </div>
-        ))}</div>
+          {game.board.map((row, rowIndex) => (
+            <div key={rowIndex} className={styles.board_row}>
+              {row.map((cell, cellIndex) => (
+                <Frame>
+                  <div key={cellIndex} className={cell.value=="O" ? styles.square_frame : styles.gray}>
+                    {cell.value == "X" ? <X_index isActive={false} /> : cell.value == "O" ? <O_index isActive={cell.isActive} /> : ""}
+                  </div>
+                </Frame>
+              ))}
+            </div>
+          ))}</div>
       </Frame>
       <Button handleClick={restartGame}>Play Again</Button>
       <Button handleClick={() => nav('/menu')}>Back to Menu</Button>

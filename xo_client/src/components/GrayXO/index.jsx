@@ -12,13 +12,13 @@ export default function GrayXO({ sign, chosen }) {
         {sign === 'X' ? (
           <div className={`${styles.letter} ${chosen ? styles.bigger : ''}`}>
             <div className={`${styles.letter} ${!chosen ? styles.gray : ''}`}>
-              <X_index/>
+              <X_index isActive={chosen}/>
             </div>
           </div>
         ) : (
           <div className={`${styles.letter} ${chosen ? styles.bigger : ''}`}>
             <div className={`${styles.letter} ${!chosen ? styles.gray : ''}`}>
-              <O_index/>
+              <O_index isActive={chosen}/>
             </div>
           </div>
         )}
