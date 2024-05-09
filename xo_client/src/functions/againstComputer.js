@@ -3,27 +3,25 @@ import { check } from "./win";
 import { useGameStore, useUserStore, useOponentStore } from '../store';
 
 
-const ai = useOponentStore.getState().opponent.sigh; // סימון של המחשב
-const human = useUserStore.getState().user.sigh; // סימון של השחקן
 
 const jeneralboard = useGameStore.getState().game.board
 
-export function computerMove(board) {
+export function computerMove(board, ai, human) {
     // console.log(board)
     // console.log(jeneralboard)
     if (board.length == 0) {
         board = jeneralboard
     };
     let newBoard = {}
-    let computerMove = computerWins(board, newBoard);
+    let computerMove = computerWins(board, newBoard, ai, human);
     if (computerMove) return computerMove
-    let computerBlock = computerBestMove(board, newBoard);
+    let computerBlock = computerBestMove(board, newBoard, ai, human);
     if (computerBlock) return computerBlock
-    let computerRandom = randomMove(board, newBoard);
+    let computerRandom = randomMove(board, newBoard, ai, human);
     return computerRandom;
 }
 
-function computerWins(board, newBoard) {
+function computerWins(board, newBoard, ai, human) {
     let i = 0;
     let j = 0;
     let foundMove = false;
@@ -49,7 +47,7 @@ function computerWins(board, newBoard) {
     return foundMove ? newBoard : null;
 }
 
-function computerBestMove(board, newBoard) {
+function computerBestMove(board, newBoard, ai, human) {
     let i = 0;
     let j = 0;
     let foundMove = false;
@@ -76,7 +74,7 @@ function computerBestMove(board, newBoard) {
     return null;
 }
 
-function randomMove(board, newBoard) {
+function randomMove(board, newBoard, ai, human) {
     let random = Math.floor(Math.random() * board.length*board.length);
     let i = Math.floor(random / board.length);
     let j = random % board.length;
