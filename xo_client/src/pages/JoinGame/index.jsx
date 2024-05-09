@@ -4,11 +4,19 @@ import Title from '../../components/Title'
 import Frame from '../../components/Frame'
 import Button from '../../components/Button'
 import style from './style.module.scss'
-import { NavLink } from 'react-router-dom'
+import { useEffect } from 'react'
+import useSocket from '../../socket'
 
 
-export default function JoinGame() {
-
+export default function JoinGame({connectToRoom}) {
+  const socket = useSocket();
+  const handleSubmit = (e) => {
+    e.preventDefault(); 
+    connectToRoom(e.target.roomNumber.value)
+    socket.on('room-status',(msg)=>console.log(msg))
+    socket.emit('room',e.target.roomNumber.value)
+    console.log('Joining room:', e.target.roomNumber.value)
+  }
 
 
   return (
@@ -20,8 +28,8 @@ export default function JoinGame() {
         Join A Game
       </Title>
       <Frame>
-        <div >
-        <input className={style.join} type="text" placeholder='Enter code game' /></div>
+        <form onSubmit={handleSubmit}>
+        <input className={style.join} type="text" placeholder='Enter code game' name="roomId"/></form>
       </Frame>
     <div onClick={() => window.location.href = "/waiting"} className={style.littlejoin}>
       <button >
