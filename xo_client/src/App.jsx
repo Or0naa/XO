@@ -10,12 +10,10 @@ import WaitingJoin from "./pages/WaitingJoin";
 import GameBoard from "./pages/GameBoard";
 import CreateGame from "./pages/CreateGame";
 import ChoosePlayer from "./pages/ChoosePlayer";
-import { SocketProvider } from "./socket"
-
+import { SocketProvider } from "./socket";
 
 export default function App() {
-  
-  const [roomId, setRoomId] = useState(null)
+  const [roomId, setRoomId] = useState(null);
 
   const router = createBrowserRouter([
     {
@@ -28,11 +26,15 @@ export default function App() {
     },
     {
       path: "/join",
-      element: <JoinGame connectToRoom={setRoomId} roomId={roomId} />,
+      element: <JoinGame connectToRoom={(roomId) => {
+        setRoomId(roomId);
+        console.log('Connecting to room:', roomId);
+      }} />,
     },
-    {path: "/create",
-  element:<CreateGame/>
-  },
+    {
+      path: "/create",
+      element: <CreateGame/>
+    },
     {
       path: "/player",
       element: <PlayerDetails />,
@@ -54,10 +56,12 @@ export default function App() {
       element: <GameBoard />,
     },
   ]);
+
   return (
     <>
-      <SocketProvider> <RouterProvider router={router} /></SocketProvider> 
-    
+      <SocketProvider>
+        <RouterProvider router={router} />
+      </SocketProvider>
     </>
-  )
+  );
 }
