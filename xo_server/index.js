@@ -14,6 +14,7 @@ function generateRoomNumber() {
 }
 
 const rooms = {};
+const users={}; 
 
 io.on('connection', (socket) => {
   console.log('A user connected');
@@ -45,12 +46,37 @@ io.on('connection', (socket) => {
         console.log('Emitting game:join-success for room', roomId);
         io.to(roomId).emit('game:join-success', room);
         io.to(roomId).emit('game:user-success', room);
-        
+
       }
     } else {
       console.log('Room is full, emitting roomFull');
       socket.emit('roomFull');
     }
+
+    socket.on('updateDetails', ({ playerType, updatedDetails }) => {
+      console.log('Received update details from client:', playerType, updatedDetails);
+  
+      // Update user details in the users object
+      users[socket.id] = { ...users[socket.id], ...updatedDetails };
+  
+      // Get the room the user is in
+      const roomId = Array.from(socket.rooms)[1];
+      if (roomId) {
+        const room = rooms[roomId];
+        if (room) {
+          // Emit the updated details to all users in the same room
+          io.to(roomId).emit('userDetailsUpdated', { userId: socket.id, updatedDetails });
+        }
+      }
+    });
+  });
+
+  
+
+  socket.on('updateDetails', (details) => {
+    console.log('Received update details from client:', details);
+    // Update user details in database
+    socket.emit('chageView', details);
   });
 
   socket.on('move', ({ roomId, index }) => {
