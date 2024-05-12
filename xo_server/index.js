@@ -20,8 +20,10 @@ io.on('connection', (socket) => {
   console.log('A user connected');
 
   const roomNumber = generateRoomNumber(); 
-  // console.log("Room number generated:", roomNumber);
+  console.log("Room number generated:", roomNumber);
   socket.emit('roomNumber', roomNumber); 
+
+
 
   // Join a room
   socket.on('game:join-room', (roomId) => {
@@ -36,6 +38,10 @@ io.on('connection', (socket) => {
       // console.log(`${socket.id} left room ${roomId}`);
 
     }
+
+    socket.on('room:data', (game)=>{
+      console.log("game", game);
+    })
 
     const room = rooms[roomId];
 

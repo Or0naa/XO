@@ -37,7 +37,7 @@ export default function ChoosePlayer() {
     setChosenSign(sign === chosenSign ? null : sign);
     const newUser = {
       ...user,
-      avatar: user.avatar,
+      sigh: sign,
     }
 
     setUser(newUser);

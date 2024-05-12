@@ -6,7 +6,6 @@ import { useNavigate } from 'react-router-dom';
 import Button from '../../components/Button';
 import useSocket from '../../socket';
 import { useState, useEffect } from 'react';
-import { useGameStore } from '../../store';
 
 export default function CreateGame() {
   const nav = useNavigate();
@@ -19,21 +18,25 @@ export default function CreateGame() {
 
   const [roomNumber, setRoomNumber] = useState(null); // State to store the received room number
 
+  const { game, setGame } = useGameStore(state => ({
+    game: state.game,
+    setGame: state.setGame
+  }));
+
 
   useEffect(() => {
     // Listen for the roomNumber event
     socket.on('roomNumber', (roomNumber) => {
       setRoomNumber(roomNumber);
-      
-     
     });
-   
-    socket.on('game:join-success', () => {
-      socket.emit('room:data', game); 
-     setConnect(true);
-     nav('/choose') 
-  }
-    )
+
+    socket.emit('game:data', game);
+
+    socket.on('game:join-success',()=>{
+      console.log("התחברת")
+      nav('/choose')
+    })
+
     // Clean up event listener
     return () => {
       socket.off('roomNumber');
