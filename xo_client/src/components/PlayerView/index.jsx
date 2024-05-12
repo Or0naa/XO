@@ -40,13 +40,15 @@ export default function PlayerView() {
             const { updatedDetails, playerType } = data;
             if (playerType === 'user') {
                 setUser({ ...user, name: updatedDetails[name], avatar: updatedDetails[avatar] });
+                console.log(updatedDetails)
             } else {
-                setOpponent({ ...opponent,  name: updatedDetails[name], avatar: updatedDetails[avatar]  });
+                setOpponent({ ...opponent, name: updatedDetails[name], avatar: updatedDetails[avatar] });
             }
-       
-        });
-    }, [socket]);
 
+        });
+    }, [socket, user, opponent]);
+
+    console.log({ user, opponent });
 
     return (
         <>

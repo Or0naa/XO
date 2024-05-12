@@ -7,8 +7,12 @@ import Button from '../../components/Button';
 import { FiSettings } from "react-icons/fi";
 import { useNavigate } from 'react-router-dom';
 import { useGameStore, useUserStore, useOponentStore } from '../../store';
+import useSocket from '../../socket';
+
 
 export default function ChoosePlayer() {
+
+  const socket = useSocket();
 
   const nav = useNavigate();
   const [chosenSign, setChosenSign] = useState(null);
@@ -33,10 +37,12 @@ export default function ChoosePlayer() {
     })
   );
   const handleSignClick = (sign) => {
-    if (sign === chosenSign) {
+    if (sign === chosenSign || sign == user.sigh) {
       return;
     }
     setChosenSign(sign === chosenSign ? null : sign);
+    socket.emit('game:choose-sign', sign);
+
     const newUser = {
       ...user,
       sigh: sign,
@@ -48,6 +54,10 @@ export default function ChoosePlayer() {
       sigh: sign === 'X' ? 'O' : 'X',
 
     }
+    socket.on('game:choosen-sign', (data) => {
+      const opponentSign = data === 'X' ? 'O' : 'X';
+      setOpponent({ ...opponent, sigh: opponentSign });
+    })
     setOpponent(newOpponent);
 
   };
