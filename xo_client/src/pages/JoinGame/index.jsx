@@ -11,6 +11,10 @@ import { useGameStore } from '../../store';
 
 export default function JoinGame({ connectToRoom }) {
   const nav = useNavigate();
+  const {game, setGame} = useGameStore(state => ({
+    game: state.game,
+    setGame: state.setGame
+  }));
   const [roomId, setRoomId] = useState("");
   const joinRoomHandler = (roomId) => {
     setRoomId(roomId);
@@ -60,8 +64,8 @@ export default function JoinGame({ connectToRoom }) {
           <input className={style.join} type="text" placeholder="Enter code game" name="roomId" />
        
         </Frame> </form>
-        <div type="submit" className={style.littlejoin}>
-      <Button >Join</Button>
+        <div  className={style.littlejoin}>
+      <button >Join</button>
       </div>
       <span>Or</span>
       <div onClick={() => window.location.href = "/create"}>
