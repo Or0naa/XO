@@ -4,21 +4,61 @@
     @extend .b;
     width: 100vw;
     height: 100vh;
+    position: relative;
+   .title {
+        margin-bottom: 150px;
+ h1{
+  display: flex;
+  justify-content: center;
+   align-items: flex-start; /* Align the items to the start (top) */
+ }
+     
+
+    .roomNumber {
+    font-size: 60px;
+     div{
+      padding:8px;
+     }
+    }
+   }
+  
 h2 {
     font-size: 30px;
     margin: 5px;
 }
 }
-.loader {
-  width: 50px;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: 
-    radial-gradient(farthest-side,#ffa516 94%,#0000) top/8px 8px no-repeat,
-    conic-gradient(#0000 30%,#ffa516);
-  -webkit-mask: radial-gradient(farthest-side,#0000 calc(100% - 8px),#000 0);
-  animation: l13 1s infinite linear;
+.svg {
+  margin-top: 20px;
+  position: absolute;
+  left: 50%;
+  top: 55%;
+  transform: translate(-50%, -50%);
 }
-@keyframes l13{ 
-  100%{transform: rotate(1turn)}
+
+.outline {
+  stroke-dasharray: 2.42777px, 242.77666px;
+  stroke-dashoffset: 0;
+  animation: anim 1.6s linear infinite;
+}
+
+.outlineBg {
+  stroke-dasharray: 2.42777px, 242.77666px;
+  stroke-dashoffset: 0;
+}
+
+@keyframes anim {
+  12.5% {
+    stroke-dasharray: 33.98873px, 242.77666px;
+    stroke-dashoffset: -26.70543px;
+  }
+
+  43.75% {
+    stroke-dasharray: 84.97183px, 242.77666px;
+    stroke-dashoffset: -84.97183px;
+  }
+
+  100% {
+    stroke-dasharray: 2.42777px, 242.77666px;
+    stroke-dashoffset: -240.34889px;
+  }
 }
