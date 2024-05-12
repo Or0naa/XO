@@ -28,9 +28,11 @@ export default function PlayerDetails() {
     const [chosenPhoto, setChosenPhoto] = useState("./taltalaz.bmp")
 
     const choosePhoto = (image) => {
-        // setUser({ ...user, image: image });
+        setUser({ ...user, avatar: image });
         setChosenPhoto(image);
     };
+
+    console.log(user)
 
     return (
         <div className={styles.playerDetails}>

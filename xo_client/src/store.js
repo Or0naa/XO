@@ -2,9 +2,9 @@ import { create } from 'zustand'
 
 export const useUserStore = create((set) => ({
     user: {
-        name: 'eliraz',
+        name: 'bobby',
         avatar: './female.png',
-        wins: '13',
+        wins: '0',
         sigh: 'X',
 
     },
@@ -16,7 +16,7 @@ export const useOponentStore = create((set) => ({
     opponent: {
         name: 'boty',
         avatar: './robot.png',
-        wins: '6',
+        wins: '0',
         sigh: 'O',
     },
     setOpponent: (opponent) => set({ opponent })
@@ -28,7 +28,7 @@ export const useGameStore = create((set) => ({
         win: false,
         winner: null,
         board: [],
-        squares: 3,
+        squares: 0,
         currentPlayer:  'X',
         gameType: 'computer'
     },
