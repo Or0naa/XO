@@ -35,15 +35,15 @@ export default function PlayerView() {
     );
 
     useEffect(() => {
-        socket.on('chageView', (data) => {
+        socket.on('userDetailsUpdated', (data) => {
+            console.log('chageView', data);
             const { updatedDetails, playerType } = data;
             if (playerType === 'user') {
-                setUser({ ...user, updatedDetails });
+                setUser({ ...user, name: updatedDetails[name], avatar: updatedDetails[avatar] });
             } else {
-                setOpponent({ ...opponent, updatedDetails });
+                setOpponent({ ...opponent,  name: updatedDetails[name], avatar: updatedDetails[avatar]  });
             }
-            setUser(data.user);
-            setOpponent(data.opponent);
+       
         });
     }, [socket]);
 
