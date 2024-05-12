@@ -50,6 +50,7 @@ export default function PlayerView({ playerType, player }) {
         };
       }, [socket, user, opponent, setUser, setOpponent]);
 
+    console.log({ user, opponent });
 
     return (
         <>
