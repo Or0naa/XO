@@ -2,7 +2,7 @@ import { useState } from 'react'
 import Frame from '../Frame'
 import styles from './style.module.scss'
 import BackArrow from '../BackArrow'
-import {  useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useUserStore, useOponentStore } from '../../store'
 import { FiCheck } from 'react-icons/fi'
 import useSocket from '../../socket';
@@ -27,16 +27,12 @@ export default function GenericDetails({ playerType }) {
         })
     )
 
+    const [name, setName] = useState("");
+    const [photo, setPhoto] = useState("");
+
     const handleChange = (e) => {
-        const updatedDetails = { name: e.target.value };
-        if (playerType === 'user') {
-          setUser({ ...user, ...updatedDetails });
-          socket.emit('updateDetails', { playerType: 'user', updatedDetails });
-        } else {
-          setOpponent({ ...opponent, ...updatedDetails });
-          socket.emit('updateDetails', { playerType: 'opponent', updatedDetails });
-        }
-      };
+        setName(e.target.value);
+    };
 
     const handleGoBack = () => {
         nav('/menu')
@@ -46,24 +42,24 @@ export default function GenericDetails({ playerType }) {
     const [chosenPhoto, setChosenPhoto] = useState("./taltalaz.bmp")
 
     const choosePhoto = (image) => {
-        if (playerType === 'user') {
-            setUser({ ...user, avatar: image });
-            socket.emit('updateDetails', {
-                playerType: 'user',
-                updatedDetails: { avatar: image }
-            });
-        } else {
-            setOpponent({ ...opponent, avatar: image })
-            socket.emit('updateDetails', {
-                playerType: 'opponent',
-                updatedDetails: { avatar: image }
-            });
-        }
-        setChosenPhoto(image);
+        setChosenPhoto(image)
     };
 
     const handleLetsPlay = () => {
-        console.log(opponent)
+
+        if (playerType === 'user') {
+            setUser({ ...user, name: name })
+            socket.emit('updateDetails', {
+                playerType: 'user',
+                updatedDetails: { name: name, avatar: chosenPhoto }
+            });
+        } else {
+            setOpponent({ ...opponent, name: name })
+            socket.emit('updateDetails', {
+                playerType: 'opponent',
+                updatedDetails: { name: name, avatar: chosenPhoto }
+            });
+        }
         nav('/game')
     }
 
