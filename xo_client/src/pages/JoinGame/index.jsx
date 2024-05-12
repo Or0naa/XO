@@ -23,7 +23,7 @@ export default function JoinGame({ connectToRoom }) {
     connectToRoom(roomId);
     // Call the joinRoomHandler function with the room ID
     joinRoomHandler(roomId);
-    socket.emit('game:join-room', roomId);
+    socket.emit('game:join-room', roomId)
   };
 
   useEffect(() => {
