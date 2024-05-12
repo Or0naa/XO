@@ -1,4 +1,3 @@
-import Board from "./components/Board";
 import JoinGame from "./pages/JoinGame";
 import Menu from "./pages/Menu";
 import PlayerDetails from "./pages/PlayerDetails";
@@ -33,7 +32,7 @@ export default function App() {
     },
     {
       path: "/create",
-      element: <CreateGame/>
+      element: <CreateGame roomNumber={roomId} />
     },
     {
       path: "/player",
