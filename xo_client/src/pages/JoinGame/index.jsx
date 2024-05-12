@@ -20,6 +20,13 @@ export default function JoinGame({ connectToRoom }) {
     setRoomId(roomId);
   }
 
+  const { game, setGame } = useGameStore(
+    state => ({
+      game: state.game,
+      setGame: state.setGame
+    })
+  );
+
   const socket = useSocket();
 
   const handleSubmit = (e) => {

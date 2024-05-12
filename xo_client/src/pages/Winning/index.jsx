@@ -15,15 +15,13 @@ export default function Winning({ winner }) {
       game: state.game,
       setGame: state.setGame
     })
-  ); const { user, setUser } = useUserStore(
+  ); const  {user}  = useUserStore(
     state => ({
       user: state.user,
-      setUser: state.setUser
     })
-  ); const { oponent, setOponent } = useOponentStore(
+  ); const  opponent = useOponentStore(
     state => ({
-      oponent: state.oponent,
-      setOponent: state.setOponent
+      opponent: state.opponent
     })
   );
 
@@ -51,7 +49,7 @@ export default function Winning({ winner }) {
   const [isXwin, setXwin] = useState(game.winner == 'X');
   const [isOwin, setOwin] = useState(game.winner == 'O');
   console.log("x", isXwin, 'o', isOwin)
-  const [winnerName, setWinnerName] = useState(user.sigh == game.winner ? user.name : oponent.name)
+  const [winnerName, setWinnerName] = useState(user.sigh == game.winner ? user.name : opponent.opponent.name)
   
 
   return (

@@ -2,13 +2,17 @@ import { useState } from 'react'
 import Frame from '../Frame'
 import styles from './style.module.scss'
 import BackArrow from '../BackArrow'
-import { NavLink, useNavigate } from 'react-router-dom'
+import {  useNavigate } from 'react-router-dom'
 import { useUserStore, useOponentStore } from '../../store'
 import { FiCheck } from 'react-icons/fi'
+import useSocket from '../../socket';
+
 
 export default function GenericDetails({ playerType }) {
 
     const nav = useNavigate()
+    const socket = useSocket();
+
 
     const { user, setUser } = useUserStore(
         (state) => ({
@@ -24,12 +28,15 @@ export default function GenericDetails({ playerType }) {
     )
 
     const handleChange = (e) => {
+        const updatedDetails = { name: e.target.value };
         if (playerType === 'user') {
-            setUser({ ...user, name: e.target.value });
+          setUser({ ...user, ...updatedDetails });
+          socket.emit('updateDetails', { playerType: 'user', updatedDetails });
         } else {
-            setOpponent({ ...opponent, name: e.target.value })
+          setOpponent({ ...opponent, ...updatedDetails });
+          socket.emit('updateDetails', { playerType: 'opponent', updatedDetails });
         }
-    };
+      };
 
     const handleGoBack = () => {
         nav('/menu')
@@ -41,8 +48,16 @@ export default function GenericDetails({ playerType }) {
     const choosePhoto = (image) => {
         if (playerType === 'user') {
             setUser({ ...user, avatar: image });
+            socket.emit('updateDetails', {
+                playerType: 'user',
+                updatedDetails: { avatar: image }
+            });
         } else {
             setOpponent({ ...opponent, avatar: image })
+            socket.emit('updateDetails', {
+                playerType: 'opponent',
+                updatedDetails: { avatar: image }
+            });
         }
         setChosenPhoto(image);
     };

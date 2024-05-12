@@ -1,11 +1,15 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import style from './style.module.scss'
 import X_index from '../XO/X_index';
 import O_index from '../XO/O_index';
 import { useUserStore, useOponentStore } from '../../store';
+import useSocket from '../../socket';
 
 
-export default function PlayerView({ jender, name, turn, sigh, winnings }) {
+export default function PlayerView() {
+
+    const socket = useSocket();
+
 
     const { user } = useUserStore(
         state => ({
@@ -18,10 +22,36 @@ export default function PlayerView({ jender, name, turn, sigh, winnings }) {
         })
     );
 
+    const { setUser } = useUserStore(
+        state => ({
+            setUser: state.setUser
+        })
+    );
+
+    const { setOpponent } = useOponentStore(
+        state => ({
+            setOpponent: state.setOpponent
+        })
+    );
+
+    useEffect(() => {
+        socket.on('chageView', (data) => {
+            const { updatedDetails, playerType } = data;
+            if (playerType === 'user') {
+                setUser({ ...user, updatedDetails });
+            } else {
+                setOpponent({ ...opponent, updatedDetails });
+            }
+            setUser(data.user);
+            setOpponent(data.opponent);
+        });
+    }, [socket]);
+
+
     return (
         <>
             <div className={style.player}>
-                <img src={user.avatar} alt="playerImg"/>
+                <img src={user.avatar} alt="playerImg" />
                 <div className={style.playerInfo}>
                     <div className={style.sigh}>
                         {user.sigh == 'X' ? <X_index /> : <O_index />}
@@ -29,8 +59,8 @@ export default function PlayerView({ jender, name, turn, sigh, winnings }) {
                     <div className={style.wins}>wins: {user.wins}</div>
                 </div>
                 <div className={style.playerName}>{user.name}</div>
-            </div>    
-              <div className={style.player}>
+            </div>
+            <div className={style.player}>
                 <img src={opponent.avatar} alt="playerImg" style={{ borderColor: 'black', borderWidth: "3px", borderRadius: "50%", border: "solid" }} />
                 <div className={style.playerInfo}>
                     <div className={style.sigh}>

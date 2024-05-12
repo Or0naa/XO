@@ -28,10 +28,10 @@ export const useGameStore = create((set) => ({
         win: false,
         winner: null,
         board: [],
-        squares: 0,
+        squares: 3,
         currentPlayer:  'X',
         gameType: '',
-        room: [],
+        room: {}
     },
 
     setGame: (game) => set({ game })
