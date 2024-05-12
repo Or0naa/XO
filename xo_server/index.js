@@ -1,8 +1,8 @@
-const express = require('express'),
-  app = express(),
-  { createServer } = require('http'),
-  { Server } = require('socket.io'),
-  cors = require('cors');
+const express = require('express');
+const app = express();
+const { createServer } = require('http');
+const { Server } = require('socket.io');
+const cors = require('cors');
 
 app.use(cors());
 
@@ -14,7 +14,7 @@ function generateRoomNumber() {
 }
 
 const rooms = {};
-const users={}; 
+const users = {};
 
 io.on('connection', (socket) => {
   console.log('A user connected');
@@ -22,7 +22,6 @@ io.on('connection', (socket) => {
   const roomNumber = generateRoomNumber();
   console.log("Room number generated:", roomNumber);
 
-  // Create a new room and join it
   const newRoom = {
     players: [socket.id],
     board: Array,
@@ -34,59 +33,47 @@ io.on('connection', (socket) => {
 
   socket.emit('roomNumber', roomNumber);
 
-  socket.on('game:join-room', (roomId) => {
+  socket.on('game:join-room', (roomId, playerDetails) => {
     console.log(socket.id + ' joined room ' + roomId);
-
     const room = rooms[roomId];
+  
     if (room && room.players.length < 2) {
-      room.players.push(socket.id);
+      room.players.push({ id: socket.id, ...playerDetails });
       socket.join(roomId);
       console.log(`${socket.id} joined room ${roomId}, current players:`, room.players);
+  
       if (room.players.length === 2) {
         console.log('Emitting game:join-success for room', roomId);
         io.to(roomId).emit('game:join-success', room);
         io.to(roomId).emit('game:user-success', room);
-
       }
     } else {
       console.log('Room is full, emitting roomFull');
       socket.emit('roomFull');
     }
-
-    socket.on('updateDetails', ({ playerType, updatedDetails }) => {
-      console.log('Received update details from client:', playerType, updatedDetails);
-  
-      // Update user details in the users object
-      users[socket.id] = { ...users[socket.id], ...updatedDetails };
-  
-      // Get the room the user is in
-      const roomId = Array.from(socket.rooms)[1];
-      if (roomId) {
-        const room = rooms[roomId];
-        if (room) {
-          // Emit the updated details to all users in the same room
-          io.to(roomId).emit('userDetailsUpdated', { userId: socket.id, updatedDetails });
-        }
-      }
-    });
   });
 
-  
+  socket.on('updateDetails', ({ playerType, updatedDetails }) => {
+    console.log('Received update details from client:', playerType, updatedDetails);
+    users[socket.id] = { ...users[socket.id], ...updatedDetails };
 
-  socket.on('updateDetails', (details) => {
-    console.log('Received update details from client:', details);
-    // Update user details in database
-    socket.emit('chageView', details);
+    const roomId = Array.from(socket.rooms)[1];
+    if (roomId) {
+      const room = rooms[roomId];
+      if (room) {
+        io.to(roomId).emit('userDetailsUpdated', { userId: socket.id, updatedDetails });
+      }
+    }
   });
 
   socket.on('move', ({ roomId, index }) => {
     const room = rooms[roomId];
-    if (room && room.players.includes(socket.id)) {
+    if (room && room.players.some(player => player.id === socket.id)) {
       const currentPlayer = room.players[room.currentTurn];
-      if (socket.id == currentPlayer && room.board[index] == null) {
+      if (socket.id === currentPlayer.id && room.board[index] === null) {
         room.board[index] = room.currentTurn;
         room.currentTurn = 1 - room.currentTurn;
-        io.to(roomId).emit('roomData', room);
+        io.to(roomId).emit('gameUpdate', room);
       }
     }
   });

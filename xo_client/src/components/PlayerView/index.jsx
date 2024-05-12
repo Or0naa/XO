@@ -6,7 +6,7 @@ import { useUserStore, useOponentStore } from '../../store';
 import useSocket from '../../socket';
 
 
-export default function PlayerView() {
+export default function PlayerView({ playerType, player }) {
 
     const socket = useSocket();
 
@@ -35,41 +35,34 @@ export default function PlayerView() {
     );
 
     useEffect(() => {
-        socket.on('userDetailsUpdated', (data) => {
-            console.log('chageView', data);
-            const { updatedDetails, playerType } = data;
-            if (playerType === 'user') {
-                setUser({ ...user, name: updatedDetails[name], avatar: updatedDetails[avatar] });
-            } else {
-                setOpponent({ ...opponent,  name: updatedDetails[name], avatar: updatedDetails[avatar]  });
-            }
-       
+        socket.on('updatedDetails', (data) => {
+          console.log('updatedDetails', data);
+          const { updatedDetails, playerType } = data;
+          if (playerType === 'user') {
+            setUser({ ...user, ...updatedDetails });
+          } else {
+            setOpponent({ ...opponent, ...updatedDetails });
+          }
         });
-    }, [socket]);
+      
+        return () => {
+          socket.off('updatedDetails');
+        };
+      }, [socket, user, opponent, setUser, setOpponent]);
 
 
     return (
         <>
-            <div className={style.player}>
-                <img src={user.avatar} alt="playerImg" />
-                <div className={style.playerInfo}>
-                    <div className={style.sigh}>
-                        {user.sigh == 'X' ? <X_index /> : <O_index />}
-                    </div>
-                    <div className={style.wins}>wins: {user.wins}</div>
-                </div>
-                <div className={style.playerName}>{user.name}</div>
-            </div>
-            <div className={style.player}>
-                <img src={opponent.avatar} alt="playerImg" style={{ borderColor: 'black', borderWidth: "3px", borderRadius: "50%", border: "solid" }} />
-                <div className={style.playerInfo}>
-                    <div className={style.sigh}>
-                        {opponent.sigh == 'X' ? <X_index /> : <O_index />}
-                    </div>
-                    <div className={style.wins}>wins: {opponent.wins}</div>
-                </div>
-                <div className={style.playerName}>{opponent.name}</div>
-            </div>
+              <div className={style.player}>
+      <img src={player.avatar} alt="playerImg" />
+      <div className={style.playerInfo}>
+        <div className={style.sigh}>
+          {player.sigh === 'X' ? <X_index /> : <O_index />}
+        </div>
+        <div className={style.wins}>wins: {player.wins}</div>
+      </div>
+      <div className={style.playerName}>{player.name}</div>
+    </div>
         </>
     );
 }

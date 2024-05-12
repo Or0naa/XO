@@ -11,12 +11,14 @@ import { useGameStore } from '../../store';
 
 export default function JoinGame({ connectToRoom }) {
   const nav = useNavigate();
-
+  const {game, setGame} = useGameStore(state => ({
+    game: state.game,
+    setGame: state.setGame
+  }));
   const [roomId, setRoomId] = useState("");
   const joinRoomHandler = (roomId) => {
     setRoomId(roomId);
   }
-
 
   const socket = useSocket();
 
