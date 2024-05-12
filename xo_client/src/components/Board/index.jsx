@@ -81,7 +81,7 @@ export default function Board() {
 
         const newBoard = [...game.board];
         newBoard[i][j].value = user.sigh;
-        setGame({ ...game, board: newBoard, currentPlayer:  opponent.sigh });
+        setGame({ ...game, board: newBoard, currentPlayer: opponent.sigh });
         setCoung(count - 1);
 
         const result = check(newBoard, user.sigh, i, j);
@@ -157,23 +157,23 @@ export default function Board() {
     }
 
 
-        return (
-            <Frame>
-                <div className={styles.board}>
-                    {game.board.map((line, i) => (
-                        <div key={i} className={styles.board_row}>
-                            {line.map((square, j) => (
-                                <Frame key={j}>
-                                    <div className={styles.square_frame} onClick={() => handleSquare(i, j, gameType)}>
-                                        {square.value == "X" ? <X_index /> : square.value == "O" ? <O_index /> :
-                                            square.value == undefined && opponent.sigh == "O" ? <O_index /> :
-                                                square.value == undefined && opponent.sigh == "X" ? <X_index /> : ""}
-                                    </div>
-                                </Frame>
-                            ))}
-                        </div>
-                    ))}
-                </div>
-            </Frame>
-        );
-    }
+    return (
+        <Frame>
+            <div className={styles.board}>
+                {game.board.map((line, i) => (
+                    <div key={i} className={styles.board_row}>
+                        {line.map((square, j) => (
+                            <Frame key={j}>
+                                <div className={styles.square_frame} onClick={() => handleSquare(i, j, gameType)}>
+                                    {square.value == "X" ? <X_index /> : square.value == "O" ? <O_index /> :
+                                        square.value == undefined && opponent.sigh == "O" ? <O_index /> :
+                                            square.value == undefined && opponent.sigh == "X" ? <X_index /> : ""}
+                                </div>
+                            </Frame>
+                        ))}
+                    </div>
+                ))}
+            </div>
+        </Frame>
+    );
+}

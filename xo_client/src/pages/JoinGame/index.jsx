@@ -6,6 +6,7 @@ import Button from '../../components/Button';
 import style from './style.module.scss';
 import useSocket from '../../socket';
 import { useNavigate } from 'react-router-dom';
+import { useGameStore } from '../../store';
 
 
 export default function JoinGame({ connectToRoom }) {
@@ -26,6 +27,7 @@ export default function JoinGame({ connectToRoom }) {
     socket.emit('game:join-room', roomId)
   };
 
+
   useEffect(() => {
     socket.on('game:join-success', () => {
       nav('/oponent')
@@ -39,7 +41,7 @@ export default function JoinGame({ connectToRoom }) {
       socket.off('game:join-success');
       socket.off('game:join-failure');
     }
-  }, [socket]);
+  }, [socket, nav]);
   return (
     <div className={style.joinGame}>
       <BackArrow />

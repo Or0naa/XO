@@ -6,7 +6,6 @@ export const useUserStore = create((set) => ({
         avatar: './female.png',
         wins: '0',
         sigh: 'X',
-        whoAmI: 'user'
 
     },
     setUser: (user) => set({ user })
@@ -19,7 +18,6 @@ export const useOponentStore = create((set) => ({
         avatar: './robot.png',
         wins: '0',
         sigh: 'O',
-        whoAmI: 'opponent'
     },
     setOpponent: (opponent) => set({ opponent })
 
@@ -32,7 +30,8 @@ export const useGameStore = create((set) => ({
         board: [],
         squares: 0,
         currentPlayer:  'X',
-        gameType: 'computer'
+        gameType: '',
+        room: [],
     },
 
     setGame: (game) => set({ game })
