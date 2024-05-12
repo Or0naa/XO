@@ -6,11 +6,15 @@ import { useNavigate } from 'react-router-dom';
 import Button from '../../components/Button';
 import useSocket from '../../socket';
 import { useState, useEffect } from 'react';
-import { useGameStore } from '../../store';
 
 export default function CreateGame() {
   const nav = useNavigate();
   const socket = useSocket();
+  const {game , setGame} = useGameStore(state => ({
+    game: state.game,
+    setGame: state.setGame
+  }));
+  const [connect, setConnect] = useState(false);
 
   const [roomNumber, setRoomNumber] = useState(null); // State to store the received room number
 
@@ -42,19 +46,21 @@ export default function CreateGame() {
 
 
 
+
   return (
     <div className={styles.createContainer}>
       <BackArrow />
       <Frame>
         <h1>Your Code: {roomNumber}</h1> 
       </Frame>
-      <h1>Send message</h1>
-      <a href='https://wa.link/lime1k' target='_blank'>This is your link</a>
+      {/* <h1>Send message</h1>
+      <a href='https://wa.link/lime1k' target='_blank'>This is your link</a> */}
       <div className={styles.loader}></div>
-      Waiting for opponent
+      { connect ? 
       <Button>
         <h2 onClick={() => nav('/choose')}>Choose Shape</h2>
-      </Button>
+      </Button> : 
+     <h1>Waiting for opponent</h1> }
     </div>
   );
 }
