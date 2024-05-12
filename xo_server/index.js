@@ -37,12 +37,12 @@ io.on('connection', (socket) => {
   socket.on('game:join-room', (roomId, playerDetails) => {
     console.log(socket.id + ' joined room ' + roomId);
     const room = rooms[roomId];
-  
+
     if (room && room.players.length < 2) {
       room.players.push({ id: socket.id, ...playerDetails });
       socket.join(roomId);
       console.log(`${socket.id} joined room ${roomId}, current players:`, room.players);
-  
+
       if (room.players.length === 2) {
         console.log('Emitting game:join-success for room', roomId);
         io.to(roomId).emit('game:join-success', room);
@@ -54,29 +54,29 @@ io.on('connection', (socket) => {
     }
   });
 
-    socket.on('updateDetails', ({ playerType, updatedDetails }) => {
-      console.log('Received update details from client:', playerType, updatedDetails);
+  socket.on('updateDetails', ({ playerType, updatedDetails }) => {
+    console.log('Received update details from client:', playerType, updatedDetails);
 
-      // Update user details in the users object
-      users[socket.id] = { ...users[socket.id], ...updatedDetails };
+    // Update user details in the users object
+    users[socket.id] = { ...users[socket.id], ...updatedDetails };
 
-      // Get the room the user is in
-      const roomId = Array.from(socket.rooms)[1];
-      if (roomId) {
-        const room = rooms[roomId];
-        if (room) {
-          // Emit the updated details to all users in the same room
+    // Get the room the user is in
+    const roomId = Array.from(socket.rooms)[1];
+    if (roomId) {
+      const room = rooms[roomId];
+      if (room) {
+        // Emit the updated details to all users in the same room
 
-          io.to(roomId).emit('userDetailsUpdated', { userId: socket.id, updatedDetails });
-        }
+        io.to(roomId).emit('userDetailsUpdated', { userId: socket.id, updatedDetails });
       }
-    });
+    }
+  });
 
-    socket.on('game:choose-sign', (sign) => {
-      console.log('Received game:choose-sign from client:', sign);
-      io.to(roomId).emit('game:choosen-sign', sign);
-    });
-  })
+  socket.on('game:choose-sign', (sign) => {
+    console.log('Received game:choose-sign from client:', sign);
+    io.to(roomId).emit('game:choosen-sign', sign);
+  });
+
 
 
 
@@ -107,4 +107,5 @@ io.on('connection', (socket) => {
       }
     }
   });
+})
 server.listen(3000, () => console.log("listening on port 3000"));
