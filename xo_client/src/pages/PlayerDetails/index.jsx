@@ -1,12 +1,15 @@
-import React from 'react'
+import { useState } from 'react'
 import Frame from '../../components/Frame'
 import styles from './style.module.scss'
 import BackArrow from '../../components/BackArrow'
-import { NavLink } from'react-router-dom'
-import {useUserStore} from '../../store'
+import { NavLink, useNavigate } from 'react-router-dom'
+import { useUserStore } from '../../store'
+import { FiCheck } from 'react-icons/fi'
 export default function PlayerDetails() {
 
-    const {user, setUser} = useUserStore(
+    const nav = useNavigate()
+
+    const { user, setUser } = useUserStore(
         (state) => ({
             user: state.user,
             setUser: state.setUser
@@ -16,23 +19,43 @@ export default function PlayerDetails() {
     const handleChange = (e) => {
         setUser({ name: e.target.value });
     };
-  
+
+    const handleGoBack = () => {
+        nav('/menu')
+    }
+
+    const imagesToChoose = ["./female.png", "./male.png", "./taltalaz.bmp", "./Woman.bmp", "./man.bmp"]
+    const [chosenPhoto, setChosenPhoto] = useState("./taltalaz.bmp")
+
+    const choosePhoto = (image) => {
+        // setUser({ ...user, image: image });
+        setChosenPhoto(image);
+    };
+
     return (
         <div className={styles.playerDetails}>
-            <nav>
-          <NavLink to="/menu">
-      <BackArrow />
-     </NavLink>
-           </nav>
-            <img src='./logo.png' alt="" />
+            <div>
+                <img className={styles.logo} src='./logo.png' alt="" />
+            </div>
             <Frame>
-            <input onChange={handleChange} type="text" placeholder='Enter Player Name' />
+                <input className={styles.input} onChange={handleChange} type="text" placeholder='Enter Player Name' />
             </Frame>
-            <Frame>
-                Choose Player
-            </Frame>
-            <img src='./male.png'></img>
-            <img src='./female.png'></img>
+            <div>
+CHOOSE AVATAR            </div>
+            <div className={styles.imagesToChoose}>
+                {imagesToChoose.map((image, index) => (
+                    <div key={index} onClick={() => choosePhoto(image)}>
+                        <img src={image} alt={image} className={chosenPhoto == image ? styles.chosenPhoto : styles.photo} />
+                    </div>
+                ))}
+            </div>
+
+            <div className={styles.back}>
+                <BackArrow handleGoBack={handleGoBack} />
+                <button>
+                    {<FiCheck className={styles.backArrow} />}</button>
+            </div>
+
         </div>
     )
 }
