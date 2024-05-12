@@ -1,38 +1,40 @@
 @import '../../vars.scss';
 
 .joinGame {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     height: 100vh;
 
-    .back {
-        text-align: left;
-    }
-     .littlejoin{
+.littlejoin {
         width: 100px;
+        @extend .b;
+
+        &>button {
+            @extend .b-button;
+        }
+
+       
+    } 
+ .join {
+    @extend .f-c;
+    height: 50px;
+    width:80vw;
+ }
+
+    span:after,
+    span:before {
+        content: '\00a0\00a0\00a0\00a0\00a0';
+        text-decoration: line-through;
+        color: white;
+        padding-left: 10px;
+        padding-right: 10px;
     }
-    // button {
-    //     @extend .b
-    // }
-   
-
-
-}
-span:after,
-span:before{
-    content:"\00a0\00a0\00a0\00a0\00a0";
-    text-decoration:line-through;
-    color: white;
-    padding-left: 10px;
-    padding-right: 10px;
-
-}
-
-.littlejoin{
-    @extend .b;
-    &> button {
-        @extend .b-button;
-    }
-}
+}   
+.title {
+            filter: drop-shadow(0 0 0.75rem white);
+            padding-bottom: 30px;
+          font-size: 35px;
+        }

@@ -42,14 +42,18 @@ export default function JoinGame({ connectToRoom }) {
   }, [socket]);
   return (
     <div className={style.joinGame}>
-      <BackArrow className={style.back} />
-      <Title>Join A Game</Title>
-      <Frame>
-        <form onSubmit={handleSubmit}>
+      <BackArrow />
+      <div className={style.title}>
+      <Title >Join A Game</Title>
+    </div> 
+      <form onSubmit={handleSubmit}> <Frame>
+      
           <input className={style.join} type="text" placeholder="Enter code game" name="roomId" />
-          <button type="submit">Join</button>
-        </form>
-      </Frame>
+       
+        </Frame> </form>
+        <div type="submit" className={style.littlejoin}>
+      <Button >Join</Button>
+      </div>
       <span>Or</span>
       <div onClick={() => window.location.href = "/create"}>
         <Button>Create Game</Button>
