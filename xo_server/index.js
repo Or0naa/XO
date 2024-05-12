@@ -4,22 +4,14 @@ const express = require('express'),
   { Server } = require('socket.io'),
   cors = require('cors');
 
-app.use(cors())
+app.use(cors());
 
-const server = createServer(app)
-const io = new Server(server, { cors: { origin: '*', methods: '*' } })
+const server = createServer(app);
+const io = new Server(server, { cors: { origin: '*', methods: '*' } });
 
 function generateRoomNumber() {
   return Math.floor(Math.random() * 100000); // You can adjust the range as needed
 }
-
-app.get('/', (req, res) => {
-  const roomNumber = generateRoomNumber();
-  console.log("Room number generated:", roomNumber);
-  res.send({ roomNumber });
-});
-
-const joinRoomEvent = 'game:join-room';
 
 // Game logic
 const rooms = {};
@@ -27,16 +19,20 @@ const rooms = {};
 io.on('connection', (socket) => {
   console.log('A user connected');
 
+  const roomNumber = generateRoomNumber(); 
+  console.log("Room number generated:", roomNumber);
+  socket.emit('roomNumber', roomNumber); 
+
   // Join a room
-  socket.on(joinRoomEvent, (roomId) => {
+  socket.on('game:join-room', (roomId) => {
     // Validate and sanitize roomId
     if (!rooms[roomId]) {
       rooms[roomId] = {
         players: [],
         board: Array(9).fill(null),
         currentTurn: 0 // Add currentTurn property
-        // Add other game state properties as needed
       };
+      console.log(`${socket.id} left room ${roomId}`);
     }
 
     const room = rooms[roomId];
