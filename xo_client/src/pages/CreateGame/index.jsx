@@ -11,16 +11,8 @@ import { useGameStore } from '../../store';
 export default function CreateGame() {
   const nav = useNavigate();
   const socket = useSocket();
-<<<<<<< HEAD
   const game = useGameStore(state => state.game);
   const setGame = useGameStore(state => state.setGame);
-=======
-  const {game, setGame} = useGameStore(state => ({
-    game: state.game,
-    setGame: state.setGame
-  }));
-
->>>>>>> f092ff68811dc30f0ea183dc84b2d4278ba88992
   const [connect, setConnect] = useState(false);
 
   const [roomNumber, setRoomNumber] = useState(null);
