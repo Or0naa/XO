@@ -2,8 +2,8 @@ import { create } from 'zustand'
 
 export const useUserStore = create((set) => ({
     user: {
-        name: 'bobby',
-        avatar: './female.png',
+        name: '',
+        avatar: '',
         wins: '0',
         sigh: 'X',
 
@@ -14,8 +14,8 @@ export const useUserStore = create((set) => ({
 
 export const useOponentStore = create((set) => ({
     opponent: {
-        name: 'boty',
-        avatar: './robot.png',
+        name: '',
+        avatar: '.',
         wins: '0',
         sigh: 'O',
     },

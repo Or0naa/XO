@@ -2,23 +2,43 @@ import React from 'react'
 import style from './style.module.scss'
 import Button from '../../components/Button'
 import { useNavigate } from 'react-router-dom';
-import { useGameStore } from '../../store';
+import { useGameStore, useOponentStore } from '../../store';
 
 
 
 
 export default function Menu() {
-    const { game, setGame } = useGameStore(
+    const {game} = useGameStore(
         state => ({
             game: state.game,
+        })
+    );
+    const {setGame} = useGameStore(
+        state => ({
             setGame: state.setGame
+        })
+    );
+    const { setOpponent } = useOponentStore(
+        state => ({
+            setOpponent: state.setOpponent
+        })
+    );
+    const { opponent } = useOponentStore(
+        state => ({
+            opponent: state.opponent,
         })
     );
 
     const navigate = useNavigate();
 
     const handleClick = () => {
-        setGame({...game, gameType:"computer"})
+        setGame({ ...game, gameType: "computer" })
+        setOpponent({
+            opponent: { ...opponent,
+                name: "Computer",
+                avatar: "./robot.png",
+            }
+        });
 
         navigate('/choose');
     }

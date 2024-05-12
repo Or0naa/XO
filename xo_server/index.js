@@ -14,7 +14,7 @@ function generateRoomNumber() {
 }
 
 const rooms = {};
-const users={}; 
+const users = {};
 
 io.on('connection', (socket) => {
   console.log('A user connected');
@@ -55,10 +55,10 @@ io.on('connection', (socket) => {
 
     socket.on('updateDetails', ({ playerType, updatedDetails }) => {
       console.log('Received update details from client:', playerType, updatedDetails);
-  
+
       // Update user details in the users object
       users[socket.id] = { ...users[socket.id], ...updatedDetails };
-  
+
       // Get the room the user is in
       const roomId = Array.from(socket.rooms)[1];
       if (roomId) {
@@ -69,9 +69,14 @@ io.on('connection', (socket) => {
         }
       }
     });
-  });
 
-  
+    socket.on('game:choose-sign', (sign) => {
+      console.log('Received game:choose-sign from client:', sign);
+      io.to(roomId).emit('game:choosen-sign', sign);
+    });
+  })
+
+
 
   socket.on('updateDetails', (details) => {
     console.log('Received update details from client:', details);
