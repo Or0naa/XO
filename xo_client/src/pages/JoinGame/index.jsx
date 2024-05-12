@@ -4,13 +4,18 @@ import Title from '../../components/Title';
 import Frame from '../../components/Frame';
 import Button from '../../components/Button';
 import style from './style.module.scss';
+import useSocket from '../../socket';
+import { useNavigate } from 'react-router-dom';
 
 
 export default function JoinGame({ connectToRoom }) {
-const [roomId, setRoomId] = useState("");
-const joinRoomHandler = (roomId) => {
-  setRoomId(roomId);
-}
+  const nav = useNavigate();
+  const [roomId, setRoomId] = useState("");
+  const joinRoomHandler = (roomId) => {
+    setRoomId(roomId);
+  }
+
+  const socket = useSocket();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -18,16 +23,32 @@ const joinRoomHandler = (roomId) => {
     connectToRoom(roomId);
     // Call the joinRoomHandler function with the room ID
     joinRoomHandler(roomId);
+    socket.emit('game:join-room', roomId);
   };
+
+  useEffect(() => {
+    socket.on('game:join-success', () => {
+      nav('/oponent')
+    });
+
+    socket.on('game:join-failure', (message) => {
+      alert(message);
+    });
+
+    return () => {
+      socket.off('game:join-success');
+      socket.off('game:join-failure');
+    }
+  }, [socket]);
   return (
     <div className={style.joinGame}>
       <BackArrow className={style.back} />
       <Title>Join A Game</Title>
       <Frame>
-          <form onSubmit={handleSubmit}>
-            <input className={style.join} type="text" placeholder="Enter code game" name="roomId" />
-            <button type="submit">Join</button>
-          </form>
+        <form onSubmit={handleSubmit}>
+          <input className={style.join} type="text" placeholder="Enter code game" name="roomId" />
+          <button type="submit">Join</button>
+        </form>
       </Frame>
       <span>Or</span>
       <div onClick={() => window.location.href = "/create"}>

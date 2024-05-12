@@ -84,12 +84,7 @@ export default function Board() {
         if (result == "row" || result == "colomn" || result == "diagonaldown" || result == "diagonalup") {
             const newBoard = [...game.board];
             setGame({ win: true, winner: user.sigh, board: newBoard });
-            setUser({
-                name: user.name,
-                avatar: user.avatar,
-                sigh: user.sigh,
-                wins: Number(user.wins) + 1
-            })
+            setUser({...user,  wins: Number(user.wins) + 1 } );
             console.log("Win: ", user.sigh);
             nav('/win')
         } else {
@@ -116,12 +111,7 @@ export default function Board() {
         const result = check(newBoard.board, computerSign, newBoard.i, newBoard.j);
         if (result == "row" || result == "colomn" || result == "diagonaldown" || result == "diagonalup") {
             const updatedBoard = [...newBoard.board];
-            setOpponent({
-                name: opponent.name,
-                avatar: opponent.avatar,
-                sigh: computerSign,
-                wins: Number(opponent.wins) + 1
-            })
+            setOpponent({ ...opponent, wins: Number(opponent.wins) + 1 });
 
             setGame({ win: true, winner: computerSign, board: updatedBoard });
             nav('/win')
