@@ -11,6 +11,10 @@ import { useGameStore } from '../../store';
 export default function CreateGame() {
   const nav = useNavigate();
   const socket = useSocket();
+  const {game, setGame} = useGameStore(state => ({
+    game: state.game,
+    setGame: state.setGame
+  }));
 
   const [connect, setConnect] = useState(false);
 
