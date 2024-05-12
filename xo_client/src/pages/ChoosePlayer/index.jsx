@@ -36,18 +36,15 @@ export default function ChoosePlayer() {
     }
     setChosenSign(sign === chosenSign ? null : sign);
     const newUser = {
-      name: user.name,
-      sigh: sign,
+      ...user,
       avatar: user.avatar,
-      wins: '0',
     }
 
     setUser(newUser);
     const newOpponent = {
-      name: opponent.name,
+      ...opponent,
       sigh: sign === 'X' ? 'O' : 'X',
-      avatar: './robot.png',
-      wins: '0',
+
     }
     setOpponent(newOpponent);
 

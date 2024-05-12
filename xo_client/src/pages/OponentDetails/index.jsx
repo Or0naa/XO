@@ -1,8 +1,8 @@
 import React from 'react'
 import GenericDetails from '../../components/GenericDetails'
 
-export default function PlayerDetails() {
+export default function OponentDetails() {
   return (
-        <GenericDetails playerType={"user"} />
+        <GenericDetails playerType={"opponent"} />
   )
 }

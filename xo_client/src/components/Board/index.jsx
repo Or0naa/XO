@@ -63,7 +63,12 @@ export default function Board() {
     const handleSquare = (i, j) => {
         if (game.win) return;
         if (game.board[i][j].value !== "") return;
-        if (currentPlayer != user.sigh && gameType != "computer") return;
+
+        if (currentPlayer != user.sigh && gameType == "friend") {
+            handleFriendMove()
+        };
+
+
 
         if (count <= 1) {
             const newBoard = [...game.board];
@@ -76,7 +81,7 @@ export default function Board() {
 
         const newBoard = [...game.board];
         newBoard[i][j].value = user.sigh;
-        setGame({ board: newBoard });
+        setGame({ ...game, board: newBoard, currentPlayer:  opponent.sigh });
         setCoung(count - 1);
 
         const result = check(newBoard, user.sigh, i, j);
@@ -84,7 +89,7 @@ export default function Board() {
         if (result == "row" || result == "colomn" || result == "diagonaldown" || result == "diagonalup") {
             const newBoard = [...game.board];
             setGame({ win: true, winner: user.sigh, board: newBoard });
-            setUser({...user,  wins: Number(user.wins) + 1 } );
+            setUser({ ...user, wins: Number(user.wins) + 1 });
             console.log("Win: ", user.sigh);
             nav('/win')
         } else {
@@ -94,6 +99,7 @@ export default function Board() {
             }
             if (gameType === "friend") {
                 setGame({ currentPlayer: (currentPlayer == opponent.sigh) });
+
             }
         }
     }
@@ -119,32 +125,55 @@ export default function Board() {
         setGame({ board: newBoard.board });
         setCoung(count - 2);
     }
-    console.log("game: ", game);
 
 
 
     const handleFriendMove = () => {
         console.log("תחברו אותי כבר לסוקט")
+        if (count <= 1) {
+            const newBoard = [...game.board];
+            newBoard[i][j].value = opponent.sigh;
+            setGame({ win: true, winner: "Draw", board: newBoard });
+            nav('/win')
+            console.log("Draw");
+            return;
+        }
+
+        const newBoard = [...game.board];
+        newBoard[i][j].value = opponent.sigh;
+        setGame({ board: newBoard });
+        setCoung(count - 1);
+
+        const result = check(newBoard, opponent.sigh, i, j);
+        console.log(result)
+        if (result == "row" || result == "colomn" || result == "diagonaldown" || result == "diagonalup") {
+            const newBoard = [...game.board];
+            setGame({ win: true, winner: opponent.sigh, board: newBoard });
+            setOpponent({ ...opponent, wins: Number(opponent.wins) + 1 });
+            console.log("Win: ", opponent.sigh);
+            nav('/win')
+        }
+        setGame({ currentPlayer: (currentPlayer == user.sigh) });
     }
 
 
-    return (
-        <Frame>
-            <div className={styles.board}>
-                {game.board.map((line, i) => (
-                    <div key={i} className={styles.board_row}>
-                        {line.map((square, j) => (
-                            <Frame key={j}>
-                                <div className={styles.square_frame} onClick={() => handleSquare(i, j, gameType)}>
-                                    {square.value == "X" ? <X_index /> : square.value == "O" ? <O_index /> :
-                                        square.value == undefined && opponent.sigh == "O" ? <O_index /> :
-                                            square.value == undefined && opponent.sigh == "X" ? <X_index /> : ""}
-                                </div>
-                            </Frame>
-                        ))}
-                    </div>
-                ))}
-            </div>
-        </Frame>
-    );
-}
+        return (
+            <Frame>
+                <div className={styles.board}>
+                    {game.board.map((line, i) => (
+                        <div key={i} className={styles.board_row}>
+                            {line.map((square, j) => (
+                                <Frame key={j}>
+                                    <div className={styles.square_frame} onClick={() => handleSquare(i, j, gameType)}>
+                                        {square.value == "X" ? <X_index /> : square.value == "O" ? <O_index /> :
+                                            square.value == undefined && opponent.sigh == "O" ? <O_index /> :
+                                                square.value == undefined && opponent.sigh == "X" ? <X_index /> : ""}
+                                    </div>
+                                </Frame>
+                            ))}
+                        </div>
+                    ))}
+                </div>
+            </Frame>
+        );
+    }

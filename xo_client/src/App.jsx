@@ -10,6 +10,7 @@ import GameBoard from "./pages/GameBoard";
 import CreateGame from "./pages/CreateGame";
 import ChoosePlayer from "./pages/ChoosePlayer";
 import { SocketProvider } from "./socket";
+import OponentDetails from "./pages/OponentDetails";
 
 export default function App() {
   const [roomId, setRoomId] = useState(null);
@@ -54,6 +55,10 @@ export default function App() {
       path: "/game",
       element: <GameBoard />,
     },
+    {
+      path: "/oponent",
+      element: <OponentDetails />
+    }
   ]);
 
   return (
