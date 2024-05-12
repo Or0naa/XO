@@ -11,38 +11,39 @@ import { useGameStore } from '../../store';
 export default function CreateGame() {
   const nav = useNavigate();
   const socket = useSocket();
-  const {game , setGame} = useGameStore(state => ({
-    game: state.game,
-    setGame: state.setGame
-  }));
+
   const [connect, setConnect] = useState(false);
 
-  const [roomNumber, setRoomNumber] = useState(null); // State to store the received room number
-
-
+  const [roomNumber, setRoomNumber] = useState(null);
 
   useEffect(() => {
-    // Listen for the roomNumber event
     socket.on('roomNumber', (roomNumber) => {
       setRoomNumber(roomNumber);
+      console.log('Received roomNumber:', roomNumber);
     });
 
-    socket.emit('game:data', game);
+    socket.on('game:user-success', (room) => {
+      if (room.players.length === 2) {
+        console.log('Both players joined, navigating to /choose');
+        console.log('Room data:', room);
+        setGame({...game, room : room}) 
 
-    socket.on('game:join-success',()=>{
-      console.log("התחברת")
-      nav('/choose')
-    })
+        nav('/choose');
+      } else {
+        console.log('Not enough players to start the game');
+      }
+    });
 
-    // Clean up event listener
+    socket.on('roomFull', () => {
+      console.log('Room is full, cannot join');
+    });
+
     return () => {
       socket.off('roomNumber');
+      socket.off('game:join-success');
+      socket.off('roomFull');
     };
-  }, [socket]);
-
-
-
-
+  }, [socket, nav]);
 
   return (
     <div className={styles.createContainer}>

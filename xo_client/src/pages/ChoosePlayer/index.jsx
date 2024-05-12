@@ -18,6 +18,8 @@ export default function ChoosePlayer() {
       setGame: state.setGame
     })
   );
+
+  console.log(game)
   const { user, setUser } = useUserStore(
     state => ({
       user: state.user,
