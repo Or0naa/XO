@@ -8,33 +8,75 @@
     justify-content: center;
     height: 100vh;
 
-.littlejoin {
-        width: 100px;
-        @extend .b;
+  
 
-        &>button {
-            @extend .b-button;
+    .join {
+        @extend .f-c;
+        height: 50px;
+        width: 80vw;
+        font-size: 20px;
+        padding: 8px;
+
+        &::-webkit-input-placeholder {
+            color: rgba(203, 202, 202, 0.604);
+            padding: 8px;
         }
 
-       
+        &:-moz-placeholder {
+            color: rgba(203, 202, 202, 0.604);
+            margin: 8px;
+        }
+
+        &::-moz-placeholder {
+            color: rgba(203, 202, 202, 0.604);
+            margin: 8px;
+        }
+
+        &:-ms-input-placeholder {
+            color: rgba(203, 202, 202, 0.604);
+            margin: 8px;
+        }
     } 
- .join {
-    @extend .f-c;
-    height: 50px;
-    width:80vw;
- }
+     .littlejoin {
+      @extend .b;
 
-    span:after,
-    span:before {
-        content: '\00a0\00a0\00a0\00a0\00a0';
-        text-decoration: line-through;
-        color: white;
-        padding-left: 10px;
-        padding-right: 10px;
-    }
-}   
-.title {
-            filter: drop-shadow(0 0 0.75rem white);
-            padding-bottom: 30px;
-          font-size: 35px;
+
+        & > button {
+            @extend .b-button;
+            width: 150px;
         }
+    }
+
+    span {
+        font-size: 40px; // Increase font size of "OR"
+        position: relative;
+      
+
+        &:after,
+        &:before {
+            content: '';
+            background-color: rgb(204, 204, 204); // Change line color if needed
+            height: 7px; // Increase line height
+            position: absolute;
+            top: 50%;
+            width: 100%; // Adjust line length as needed
+        }
+
+        &:after {
+            right: 90%; // Extend line to the left
+            margin-right:20px; // Adjust margin if needed
+        }
+
+        &:before {
+            left: 90%; // Extend line to the right
+            margin-left: 20px; // Adjust margin if needed
+        }
+    }
+}
+
+
+.title {
+    padding-bottom: 30px;
+    font-size: 40px;
+    filter: drop-shadow(0 0 0.75rem rgb(220, 226, 248));
+}

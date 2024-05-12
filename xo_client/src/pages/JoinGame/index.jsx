@@ -57,8 +57,8 @@ export default function JoinGame({ connectToRoom }) {
           <input className={style.join} type="text" placeholder="Enter code game" name="roomId" />
        
         </Frame> </form>
-        <div type="submit" className={style.littlejoin}>
-      <Button >Join</Button>
+        <div  className={style.littlejoin}>
+      <button >Join</button>
       </div>
       <span>Or</span>
       <div onClick={() => window.location.href = "/create"}>
