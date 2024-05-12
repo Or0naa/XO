@@ -38,7 +38,7 @@ export default function ChoosePlayer() {
     const newUser = {
       name: user.name,
       sigh: sign,
-      avatar: './female.png',
+      avatar: user.avatar,
       wins: '0',
     }
 
