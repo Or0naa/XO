@@ -18,10 +18,7 @@ export default function CreateGame() {
 
   const [roomNumber, setRoomNumber] = useState(null); // State to store the received room number
 
-  const { game, setGame } = useGameStore(state => ({
-    game: state.game,
-    setGame: state.setGame
-  }));
+
 
 
   useEffect(() => {
