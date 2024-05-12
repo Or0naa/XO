@@ -20,19 +20,21 @@ io.on('connection', (socket) => {
   console.log('A user connected');
 
   const roomNumber = generateRoomNumber(); 
-  console.log("Room number generated:", roomNumber);
+  // console.log("Room number generated:", roomNumber);
   socket.emit('roomNumber', roomNumber); 
 
   // Join a room
   socket.on('game:join-room', (roomId) => {
+    console.log(socket.id + ' joined room ' + roomId);
     // Validate and sanitize roomId
     if (!rooms[roomId]) {
       rooms[roomId] = {
         players: [],
-        board: Array(9).fill(null),
+        board: Array,
         currentTurn: 0 // Add currentTurn property
       };
-      console.log(`${socket.id} left room ${roomId}`);
+      // console.log(`${socket.id} left room ${roomId}`);
+
     }
 
     const room = rooms[roomId];
@@ -40,7 +42,7 @@ io.on('connection', (socket) => {
     if (room.players.length < 2) {
       room.players.push(socket.id);
       socket.join(roomId);
-      io.to(roomId).emit('roomData', room);
+      io.to(roomId).emit('game:join-success', room);
     } else {
       socket.emit('roomFull');
     }
