@@ -9,44 +9,33 @@ export const useGameStore = create((set, get) => ({
         players: [{
             sign: "X",
             name: "Player 1",
-            avatar: './woman.bmp',
+            avatar: '/woman.bmp',
             wins: 5,
         },
-    {
+        {
             sign: "O",
             name: "Player 2",
-            avatar: './woman.bmp',
+            avatar: '/woman.bmp',
             wins: 20
-    }],
+        }],
         difficulty: 3,
         type: "computer",
         currentPlayer: '', // השחקן הנוכחי בתור
-        board: {
-            board: [],
-            currentTurn: "X",
-            count: 9,
-            isGameOver: false,
-            winner: null,
-            lastMove: { i: null, j: null },
-        }
+        board: [],
+        currentTurn: "X",
+        count: 9,
+        isGameOver: false,
+        winner: null,
+        lastMove: { i: null, j: null },
+
     },
-    joinGame: (game) => {
-        const { players } = game;
-        if (players.length === 1) {
-            const newPlayer = { sign: 'O', socketId: socket.id };
-            const updatedPlayers = [...players, newPlayer];
-            set(state => ({
-                game: { ...state.game, players: updatedPlayers, roomNum: game.roomNum, currentPlayer: 'X' }
-            }));
-            socket.emit('joinGame', { ...game, players: updatedPlayers });
-        }
-    },
+   
     setGame: (game) => {
         const isHost = !get().game.players[0].socketId;
-        const newPlayer = { sign: isHost ? 'X' : 'O', socketId: socket.id };
+        const newPlayer = { sign: isHost ? 'X' : 'O', socketId: socket.id, name: 'Rachel', avatar: '/woman.bmp', wins: 5 };
         const players = isHost ? [newPlayer, { sign: 'O' }] : [...get().game.players, newPlayer];
         set(state => ({
-            game: { ...state.game, ...game, players, currentPlayer: isHost ? 'X' : 'O' }
+            game: { ...state.game, ...game, ...players, currentPlayer: isHost ? 'X' : 'O' }
         }));
         socket.emit('newGame', { ...game, players });
     },
@@ -73,67 +62,92 @@ export const useGameStore = create((set, get) => ({
         set({ game: { roomNum, currentPlayer: 'X', ...initialGameState } });
         socket.emit('newGame', { roomNum });
     },
-
-
-
-    // בדיקת ניצחון
-    checkWinner: (board) => {
-        const { currentTurn, lastMove } = get().game.board;
-        if (row(board, currentTurn, 0, lastMove.j)) return "row";
-        if (colomn(board, currentTurn, lastMove.i, 0)) return "colomn";
-        if (currentTurn === board[0][0] && diagonaldown(board, currentTurn, 0, 0)) return "diagonaldown";
-        if (currentTurn === board[board.length - 1][0] && diagonalup(board, currentTurn, board.length - 1, 0)) return "diagonalup";
-        return false;
+    joinGame: (game) => {
+        const { players } = game;
+        if (players.length === 1) {
+            const newPlayer = { sign: 'O', socketId: socket.id };
+            const updatedPlayers = [...players, newPlayer];
+            set(state => ({
+                game: { ...state.game, players: updatedPlayers, roomNum: game.roomNum, currentPlayer: 'X' }
+            }));
+            socket.emit('joinGame', { ...game, players: updatedPlayers });
+        }
     },
     // מהלך של המחשב
     computerMove: async () => {
         const { board, players } = get().game;
         await new Promise(resolve => setTimeout(resolve, 400));
-
+    
         const newBoard = computerWins(board, players[1].sign, players[0].sign) ||
             computerBestMove(board, players[1].sign, players[0].sign) ||
             randomMove(board, players[1].sign, players[0].sign);
-
+    
         if (newBoard) {
             const { i, j } = newBoard.lastMove;
             if (newBoard === "row" || newBoard === "colomn" || newBoard === "diagonaldown" || newBoard === "diagonalup") {
-                set({ game: { board: { ...board, board: newBoard.board, lastMove: { i, j }, winner: players[1].sign, isGameOver: true } } });
+                set({ game: { ...get().game, board: newBoard.board, lastMove: { i, j }, winner: players[1].sign, isGameOver: true } });
             } else {
-                set({ game: { board: { ...board, board: newBoard.board, lastMove: { i, j } } } });
+                set({ game: { ...get().game, board: newBoard.board, lastMove: { i, j }, currentTurn: get().game.currentTurn === 'X' ? 'O' : 'X' } });
             }
         }
     },
     // טיפול במהלך 
     handleMove: (i, j) => {
-        const { game, checkWinner } = get();
-        const { board, currentTurn, players } = game.board;
+        const { game } = get();
+        console.log("game: ", game)
+        const { board, currentTurn, count, isGameOver } = game;
+        // if (board[i][j] || game.isGameOver) return; // אם המשבצת כבר מומלאת או שהמשחק כבר נגמר, יש לחזור מיידית
 
-        if (board[i][j]) return;
+        const newBoard = board.map(row => [...row]);
+        newBoard[i][j].value = currentTurn;
 
-        if (game.board.count === 0) {
-            set({ game: { ...game, board: { ...board, lastMove: { i, j }, winner: "draw", isGameOver: true } } });
-            return;
-        }
+        let isDraw = newBoard.every(row => row.every(square => square !== ''));
 
-        const newBoard = [...board];
-        newBoard[i][j] = currentTurn;
-        const result = checkWinner(newBoard);
+        let result = checkWinner(newBoard, currentTurn, i, j);
 
-        if (result) {
-            const winnerSign = currentTurn;
-            set({ game: { ...game, board: { ...board, board: newBoard, lastMove: { i, j }, winner: winnerSign, isGameOver: true } } });
-            socket.emit('move', { i, j, currentTurn });
+        if (isDraw) {
+            // אם יש ניצחון או תיקו, יש לעדכן את הסטייט בהתאם
+            const winnerSign = result ? currentTurn : 'draw';
+            set(state => ({
+                game: {
+                    ...state.game,
+                    board, board: newBoard, lastMove: { i, j }, winner: winnerSign, isGameOver: true
+                }
+
+            }));
+            socket.emit('move', { i, j, currentTurn, winner: winnerSign });
         } else {
-            set({ game: { ...game, board: { ...board, board: newBoard, lastMove: { i, j }, currentTurn: currentTurn === 'X' ? 'O' : 'X' } } });
+            // אחרת, יש להחליף את התור של השחקן הנוכחי ולעדכן את הלוח
+            set(state => ({
+                game: {
+                    ...state.game,
+                    board, board: newBoard, lastMove: { i, j }, currentTurn: currentTurn === 'X' ? 'O' : 'X'
+                }
+
+            }));
             socket.emit('move', { i, j, currentTurn });
         }
     },
     updatePlayerInfo: (playerInfo) => {
-        set({ game: { ...get().game, players: [playerInfo, get().game.players[1]] } });
+        const updatedPlayers = [...get().game.players];
+        // עדכון פרטי המשתמש בהתאם לנתונים המתקבלים
+        // לדוגמה: updatedPlayers[0].sign = playerInfo.players[0].sign;
+        // לעדכן את המשתנה players במצב העדכון
+        set({ game: { ...get().game, players: updatedPlayers } });
+        console.log("playerInfo: ", playerInfo)
+        // שליחת הודעת socket עם העדכון לכל הלקוחות המחוברים
         socket.emit('updatePlayerInfo', playerInfo);
     },
 
 }));
+
+function checkWinner(board, sign, i, j) {
+    if (row(board, sign, 0, j)) return "row";
+    if (colomn(board, sign, i, 0)) return "colomn";
+    if (sign === board[0][0] && diagonaldown(board, sign, 0, 0)) return "diagonaldown";
+    if (sign === board[num - 1][0] && diagonalup(board, sign, num - 1, 0)) return "diagonalup";
+    return false;
+}
 
 function generateUniqueId() {
     return Math.random().toString(36).substring(2, 8);
@@ -169,7 +183,7 @@ function computerWins(board, ai, human) {
     let i = 0;
     let j = 0;
     let foundMove = false;
-    while (i < board.length && !foundMove) {
+    while (i < num && !foundMove) {
         if (!board[i][j]) {
             board[i][j] = ai;
             if (checkWinner(board)) {
@@ -180,7 +194,7 @@ function computerWins(board, ai, human) {
             }
         }
         j++;
-        if (j >= board.length) {
+        if (j >= num) {
             j = 0;
             i++;
         }
@@ -188,11 +202,14 @@ function computerWins(board, ai, human) {
     return foundMove ? { board, lastMove: { i, j } } : null;
 }
 
+const num =useGameStore.getState().game.difficulty;
+
 function computerBestMove(board, ai, human) {
+
     let i = 0;
     let j = 0;
     let foundMove = false;
-    while (i < board.length && !foundMove) {
+    while (i < num && !foundMove) {
         if (!board[i][j]) {
             board[i][j] = human;
             if (!checkWinner(board)) {
@@ -203,7 +220,7 @@ function computerBestMove(board, ai, human) {
             }
         }
         j++;
-        if (j >= board.length) {
+        if (j >= num) {
             j = 0;
             i++;
         }
@@ -212,15 +229,19 @@ function computerBestMove(board, ai, human) {
 }
 
 function randomMove(board, ai, human) {
+    console.log("board: ", board)
+    console.log("ai: ", ai)
+    console.log("human: ", human)
     let random = Math.floor(Math.random() * board.length * board.length);
     let i = Math.floor(random / board.length);
     let j = random % board.length;
-    if (!board[i][j]) {
-        board[i][j] = ai;
-        return { board, lastMove: { i, j } };
+    if (board[i][j].value == '') {
+      const newBoard = board.map(row => [...row]);
+      newBoard[i][j].value = ai;
+      return { board: newBoard, lastMove: { i, j } };
     }
     return randomMove(board, ai, human);
-}
+  }
 
 export const useUserStore = create((set, get) => ({
     user: null,
@@ -249,7 +270,7 @@ export const useUserPrefStore = create((set, get) => ({
         set({ language: lan })
     },
     resetAll: () => set({ isDark: false, currency: 'usd', language: 'English' })
-})) 
+}))
 
 // import { create } from 'zustand'
 

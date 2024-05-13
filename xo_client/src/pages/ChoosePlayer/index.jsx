@@ -14,21 +14,37 @@ export default function ChoosePlayer() {
 
   const nav = useNavigate();
   const [chosenSign, setChosenSign] = useState(null);
-  const { game, setGame } = useGameStore(
+  const { game } = useGameStore(
     state => ({
       game: state.game,
+    })
+  );
+  const { setGame } = useGameStore(
+    state => ({
       setGame: state.setGame
+    })
+  );
+  const { updatePlayerInfo } = useGameStore(
+    state => ({
+      updatePlayerInfo: state.updatePlayerInfo
     })
   );
 
 
   const handleSignClick = (sign) => {
-    if (sign === chosenSign || sign == user.sigh) {
-      return;
-    }
-    setChosenSign(sign === chosenSign ? null : sign);
+ 
+    // עדכון הסימן של השחקנים
+    const updatedPlayers = game.players.map((player, index) => {
+        return { ...player, sign: index === 0 ? sign : sign === 'X' ? 'O' : 'X' };
+    });
 
-  };
+    // שמירת השינויים באמצעות פונקציית setGame
+    setGame({ ...game, players: updatedPlayers });
+
+    // עדכון הסימן הנבחר
+    setChosenSign(sign);
+};
+
 
 
 

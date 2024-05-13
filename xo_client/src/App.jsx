@@ -9,7 +9,6 @@ import WaitingJoin from "./pages/WaitingJoin";
 import GameBoard from "./pages/GameBoard";
 import CreateGame from "./pages/CreateGame";
 import ChoosePlayer from "./pages/ChoosePlayer";
-import OponentDetails from "./pages/OponentDetails";
 
 export default function App() {
   const [roomId, setRoomId] = useState(null);
