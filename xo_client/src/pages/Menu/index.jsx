@@ -19,6 +19,8 @@ export default function Menu() {
         })
     );
 
+ 
+
     const navigate = useNavigate();
 
     const handleClick = () => {
@@ -27,6 +29,7 @@ export default function Menu() {
     }
     const joinGame = () => {
         setGame({ ...game, gameType: "friend" })
+
         navigate('/join');
     };
 
