@@ -1,6 +1,6 @@
 //make the next move on tic tac toe
 import { check } from "./win";
-import { useGameStore, useUserStore, useOponentStore } from '../store';
+// import { useGameStore, useUserStore, useOponentStore } from '../store';
 
 
 

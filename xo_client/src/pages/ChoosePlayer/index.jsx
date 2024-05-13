@@ -6,13 +6,11 @@ import BackArrow from '../../components/BackArrow';
 import Button from '../../components/Button';
 import { FiSettings } from "react-icons/fi";
 import { useNavigate } from 'react-router-dom';
-import { useGameStore, useUserStore, useOponentStore } from '../../store';
-import useSocket from '../../socket';
+import { useGameStore } from '../../store';
 
 
 export default function ChoosePlayer() {
 
-  const socket = useSocket();
 
   const nav = useNavigate();
   const [chosenSign, setChosenSign] = useState(null);
@@ -23,42 +21,12 @@ export default function ChoosePlayer() {
     })
   );
 
-  console.log(game)
-  const { user, setUser } = useUserStore(
-    state => ({
-      user: state.user,
-      setUser: state.setUser
-    })
-  );
-  const { opponent, setOpponent } = useOponentStore(
-    state => ({
-      opponent: state.opponent,
-      setOpponent: state.setOpponent
-    })
-  );
+
   const handleSignClick = (sign) => {
     if (sign === chosenSign || sign == user.sigh) {
       return;
     }
     setChosenSign(sign === chosenSign ? null : sign);
-    socket.emit('game:choose-sign', sign);
-
-    const newUser = {
-      ...user,
-      sigh: sign,
-    }
-
-    setUser(newUser);
-    const newOpponent = {
-      ...opponent,
-      sigh: sign === 'X' ? 'O' : 'X',
-
-    }
-    socket.on('game:choosen-sign', (data) => {
-      const opponentSign = data === 'X' ? 'O' : 'X';
-      setOpponent({ ...opponent, sigh: opponentSign });
-    })
-    setOpponent(newOpponent);
 
   };
 
@@ -68,14 +36,7 @@ export default function ChoosePlayer() {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    setGame({
-      win: false,
-      winner: null,
-      board: [],
-      squares: 3,
-      currentPlayer: 'X',
-      gameType: 'computer'
-    })
+
     navigate('/game')
   };
 
