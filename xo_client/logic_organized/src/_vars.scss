@@ -1,0 +1,12 @@
+
+:root{
+    --bc: #767674;
+}
+
+$bgColor: var(--bc);
+
+.f-c{
+    display: flex;
+    justify-content: center;    
+    align-items: center;
+}
