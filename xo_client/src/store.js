@@ -5,18 +5,21 @@ import { socket } from './socket'
 export const useGameStore = create((set, get) => ({
 
     game: {
-        roomNum: "",
+        roomNumber: "",
         players: [{
             sign: "X",
             name: "Player 1",
             avatar: '/woman.bmp',
             wins: 5,
+            socketId: ""
+
         },
         {
             sign: "O",
             name: "Player 2",
             avatar: '/woman.bmp',
-            wins: 20
+            wins: 2,
+            socketId: ""
         }],
         difficulty: 3,
         type: "computer",
@@ -29,7 +32,7 @@ export const useGameStore = create((set, get) => ({
         lastMove: { i: null, j: null },
 
     },
-   
+
     setGame: (game) => {
         const isHost = !get().game.players[0].socketId;
         const newPlayer = { sign: isHost ? 'X' : 'O', socketId: socket.id, name: 'Rachel', avatar: '/woman.bmp', wins: 5 };
@@ -42,25 +45,73 @@ export const useGameStore = create((set, get) => ({
     // נוסיף פונקציה להגרלת מזהה ייחודי
 
     // נוסיף פונקציה להתחלת משחק חדש עבור שחקן אנונימי
-    startNewAnonymousGame: () => {
-        const roomNum = generateUniqueId(); // מזהה חדש לחדר
-        set(state => ({
-            game: { ...state.game, roomNum, currentPlayer: 'X' }
-        }));
-        socket.emit('newGame', { roomNum });
+    createRoom: (playerDetails) => {
+        const roomId = null;
+        socket.emit('game:join-room', roomId, playerDetails);
+        socket.on('roomNumber', (roomNum) => {
+            console.log('roomNumber', roomNum);
+            set(state => ({
+                game: {
+                    ...state.game,
+                    roomNumber: roomNum
+                }
+            }));
+        });
     },
-    // נוסיף פונקציה להצטרפות למשחק קיים עבור שחקן אנונימי
-    joinAnonymousGame: (roomNum) => {
+    joinToRoom: (roomId) => {
+        socket.emit('game:join-room', roomId);
+        socket.on('roomFull', () => {
+            console.log('roomFull');
+        });
+        socket.on('game:join-success', (room) => {
+            console.log('game:join-success', room);
+            set(state => ({
+                game: {
+                    ...state.game,
+                    roomNumber: roomId,
+                    type: "friend", // עדכון לסוג משחק נגד שחקן אחר
+                    players: {
+                        player1: {...game.players[0],
+                            sign: room.players[0].sign,
+                            socketId: room.players[0].id
+                        },
+                        player2: {
+                            ...game.players[1],
+                            sign: room.players[1].sign,
+                            socketId: room.players[1].id
+                        }
+                    }
+                }
+            }))
+        });
+
+    },
+
+    // נוסיף פונקציה לטיפול בהודעת game:join-success
+    handleJoinSuccess: (room) => {
         set(state => ({
-            game: { ...state.game, roomNum, currentPlayer: 'O' }
+            game: {
+                ...state.game,
+                ...room,
+                type: "player", // עדכון לסוג משחק נגד שחקן אחר
+            }
         }));
-        socket.emit('joinGame', { roomNum });
+    },
+
+    // נוסיף פונקציה לטיפול בהודעת gameUpdate
+    handleGameUpdate: (room) => {
+        set(state => ({
+            game: {
+                ...state.game,
+                ...room
+            }
+        }));
     },
     // נוסיף פונקציה למשחק חדש כשהמשחק נגמר
     startNewGame: () => {
-        const { roomNum } = get().game;
-        set({ game: { roomNum, currentPlayer: 'X', ...initialGameState } });
-        socket.emit('newGame', { roomNum });
+        const { roomNumber } = get().game;
+        set({ game: { roomNumber, currentPlayer: 'X', ...initialGameState } });
+        socket.emit('newGame', { roomNumber });
     },
     joinGame: (game) => {
         const { players } = game;
@@ -68,7 +119,7 @@ export const useGameStore = create((set, get) => ({
             const newPlayer = { sign: 'O', socketId: socket.id };
             const updatedPlayers = [...players, newPlayer];
             set(state => ({
-                game: { ...state.game, players: updatedPlayers, roomNum: game.roomNum, currentPlayer: 'X' }
+                game: { ...state.game, players: updatedPlayers, roomNumber: game.roomNumber, currentPlayer: 'X' }
             }));
             socket.emit('joinGame', { ...game, players: updatedPlayers });
         }
@@ -77,11 +128,11 @@ export const useGameStore = create((set, get) => ({
     computerMove: async () => {
         const { board, players } = get().game;
         await new Promise(resolve => setTimeout(resolve, 400));
-    
+
         const newBoard = computerWins(board, players[1].sign, players[0].sign) ||
             computerBestMove(board, players[1].sign, players[0].sign) ||
             randomMove(board, players[1].sign, players[0].sign);
-    
+
         if (newBoard) {
             const { i, j } = newBoard.lastMove;
             if (newBoard === "row" || newBoard === "colomn" || newBoard === "diagonaldown" || newBoard === "diagonalup") {
@@ -92,41 +143,89 @@ export const useGameStore = create((set, get) => ({
         }
     },
     // טיפול במהלך 
-    handleMove: (i, j) => {
-        const { game } = get();
-        console.log("game: ", game)
-        const { board, currentTurn, count, isGameOver } = game;
-        // if (board[i][j] || game.isGameOver) return; // אם המשבצת כבר מומלאת או שהמשחק כבר נגמר, יש לחזור מיידית
+    // handleMove: (i, j) => {
+    //     const { game } = get();
+    //     console.log("game: ", game)
+    //     const { board, currentTurn, count, isGameOver } = game;
+    //     // if (board[i][j] || game.isGameOver) return; // אם המשבצת כבר מומלאת או שהמשחק כבר נגמר, יש לחזור מיידית
 
-        const newBoard = board.map(row => [...row]);
-        newBoard[i][j].value = currentTurn;
+    //     const newBoard = board.map(row => [...row]);
+    //     newBoard[i][j].value = currentTurn;
 
-        let isDraw = newBoard.every(row => row.every(square => square !== ''));
+    //     let isDraw = newBoard.every(row => row.every(square => square !== ''));
 
-        let result = checkWinner(newBoard, currentTurn, i, j);
+    //     let result = checkWinner(newBoard, currentTurn, i, j);
 
-        if (isDraw) {
-            // אם יש ניצחון או תיקו, יש לעדכן את הסטייט בהתאם
-            const winnerSign = result ? currentTurn : 'draw';
-            set(state => ({
-                game: {
-                    ...state.game,
-                    board, board: newBoard, lastMove: { i, j }, winner: winnerSign, isGameOver: true
-                }
+    //     if (isDraw) {
+    //         // אם יש ניצחון או תיקו, יש לעדכן את הסטייט בהתאם
+    //         const winnerSign = result ? currentTurn : 'draw';
+    //         set(state => ({
+    //             game: {
+    //                 ...state.game,
+    //                 board, board: newBoard, lastMove: { i, j }, winner: winnerSign, isGameOver: true
+    //             }
 
-            }));
-            socket.emit('move', { i, j, currentTurn, winner: winnerSign });
-        } else {
-            // אחרת, יש להחליף את התור של השחקן הנוכחי ולעדכן את הלוח
-            set(state => ({
-                game: {
-                    ...state.game,
-                    board, board: newBoard, lastMove: { i, j }, currentTurn: currentTurn === 'X' ? 'O' : 'X'
-                }
+    //         }));
+    //         socket.emit('move', { i, j, currentTurn, winner: winnerSign });
+    //     } else {
+    //         // אחרת, יש להחליף את התור של השחקן הנוכחי ולעדכן את הלוח
+    //         set(state => ({
+    //             game: {
+    //                 ...state.game,
+    //                 board, board: newBoard, lastMove: { i, j }, currentTurn: currentTurn === 'X' ? 'O' : 'X'
+    //             }
 
-            }));
-            socket.emit('move', { i, j, currentTurn });
+    //         }));
+    //         socket.emit('move', { i, j, currentTurn });
+    //     }
+    // },
+    makeMove: (index) => {
+        const { game, roomNumber } = get();
+        const { board, currentTurn, currentPlayer, type } = game;
+
+        // בדיקת תקינות המהלך
+        if (board[index] || game.isGameOver || currentPlayer !== currentTurn) {
+            return; // אם המשבצת כבר מומלאת, המשחק נגמר, או זה לא תורו של השחקן הנוכחי, אל תעשה דבר
         }
+
+        // עדכון הלוח המקומי
+        const newBoard = [...board];
+        newBoard[index] = currentTurn;
+
+        // בדיקת ניצחון או תיקו
+        const isDraw = newBoard.every(value => value !== null);
+        const winner = checkWinner(newBoard, currentTurn);
+
+        // עדכון המצב המקומי
+        if (winner || isDraw) {
+            set(state => ({
+                game: {
+                    ...state.game,
+                    board: newBoard,
+                    lastMove: { i: Math.floor(index / state.game.difficulty), j: index % state.game.difficulty },
+                    winner: winner || 'draw',
+                    isGameOver: true,
+                    currentTurn: winner ? currentTurn : null,
+                }
+            }));
+        } else {
+            set(state => ({
+                game: {
+                    ...state.game,
+                    board: newBoard,
+                    lastMove: { i: Math.floor(index / state.game.difficulty), j: index % state.game.difficulty },
+                    currentTurn: currentTurn === 'X' ? 'O' : 'X',
+                }
+            }));
+
+            // אם המשחק הוא נגד המחשב וזה תורו של המחשב
+            if (type === "computer" && currentTurn === 'O') {
+                handleComputerMove();
+            }
+        }
+
+        // שליחת המהלך לשרת
+        socket.emit('move', { roomId: roomNumber, index, currentTurn });
     },
     updatePlayerInfo: (playerInfo) => {
         const updatedPlayers = [...get().game.players];
@@ -149,9 +248,6 @@ function checkWinner(board, sign, i, j) {
     return false;
 }
 
-function generateUniqueId() {
-    return Math.random().toString(36).substring(2, 8);
-}
 
 // פונקציות עזר לבדיקת ניצחון
 function row(arr, currentTurn, i, j) {
@@ -202,7 +298,7 @@ function computerWins(board, ai, human) {
     return foundMove ? { board, lastMove: { i, j } } : null;
 }
 
-const num =useGameStore.getState().game.difficulty;
+const num = useGameStore.getState().game.difficulty;
 
 function computerBestMove(board, ai, human) {
 
@@ -236,12 +332,12 @@ function randomMove(board, ai, human) {
     let i = Math.floor(random / board.length);
     let j = random % board.length;
     if (board[i][j].value == '') {
-      const newBoard = board.map(row => [...row]);
-      newBoard[i][j].value = ai;
-      return { board: newBoard, lastMove: { i, j } };
+        const newBoard = board.map(row => [...row]);
+        newBoard[i][j].value = ai;
+        return { board: newBoard, lastMove: { i, j } };
     }
     return randomMove(board, ai, human);
-  }
+}
 
 export const useUserStore = create((set, get) => ({
     user: null,
