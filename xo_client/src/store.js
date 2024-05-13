@@ -9,24 +9,20 @@ export const useGameStore = create((set, get) => ({
         players: [{
             sign: "X",
             name: "Player 1",
-            avatar: './',
-            wins: 0,
+            avatar: './woman.bmp',
+            wins: 5,
         },
     {
             sign: "O",
             name: "Player 2",
-            avatar: './',
-            wins: 0
+            avatar: './woman.bmp',
+            wins: 20
     }],
-        difficulty: "easy",
-        type: "",
+        difficulty: 3,
+        type: "computer",
         currentPlayer: '', // השחקן הנוכחי בתור
         board: {
-            board: [
-                ["", "", ""],
-                ["", "", ""],
-                ["", "", ""]
-            ],
+            board: [],
             currentTurn: "X",
             count: 9,
             isGameOver: false,

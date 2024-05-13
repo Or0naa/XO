@@ -1,10 +1,4 @@
-import { useState } from 'react'
-import Frame from '../Frame'
-import styles from './style.module.scss'
-import BackArrow from '../BackArrow'
-import { useNavigate } from 'react-router-dom'
-import { useGameStore } from '../../store'
-import { FiCheck } from 'react-icons/fi'
+
 
 
 export default function GenericDetails({ playerType }) {

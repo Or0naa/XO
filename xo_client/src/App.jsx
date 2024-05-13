@@ -36,7 +36,7 @@ export default function App() {
     },
     {
       path: "/player",
-      element: <PlayerDetails />,
+      element: <PlayerDetails playerType="user" />,
     },
     {
       path: "/choose",
@@ -56,7 +56,7 @@ export default function App() {
     },
     {
       path: "/oponent",
-      element: <OponentDetails />
+      element: <PlayerDetails playerType="oponent" />,
     }
   ]);
 
