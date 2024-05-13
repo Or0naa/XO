@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import Frame from '../Frame'
 import styles from './style.module.scss';
-import { check } from '../../functions/win';
 import X_index from '../XO/X_index';
 import O_index from '../XO/O_index';
-import { computerMove } from '../../functions/againstComputer';
-import { useGameStore, useUserStore, useOponentStore } from '../../store';
+import { useGameStore} from '../../store';
 import { useNavigate } from 'react-router-dom';
 
 export default function Board() {

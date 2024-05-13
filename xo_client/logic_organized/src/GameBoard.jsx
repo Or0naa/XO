@@ -1,5 +1,4 @@
 import { useGameStore } from './store';
-import { socket } from './socket';
 
 const GameBoard = () => {
     const { game, handleLastMove, startNewAnonymousGame, generateUniqueId } = useGameStore();

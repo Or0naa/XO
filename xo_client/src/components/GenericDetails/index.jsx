@@ -3,29 +3,17 @@ import Frame from '../Frame'
 import styles from './style.module.scss'
 import BackArrow from '../BackArrow'
 import { useNavigate } from 'react-router-dom'
-import { useUserStore, useOponentStore } from '../../store'
+import { useGameStore } from '../../store'
 import { FiCheck } from 'react-icons/fi'
-import useSocket from '../../socket';
 
 
 export default function GenericDetails({ playerType }) {
 
     const nav = useNavigate()
-    const socket = useSocket();
 
-
-    const { user, setUser } = useUserStore(
-        (state) => ({
-            user: state.user,
-            setUser: state.setUser
-        })
-    )
-    const { opponent, setOpponent } = useOponentStore(
-        (state) => ({
-            opponent: state.opponent,
-            setOpponent: state.setOpponent
-        })
-    )
+    const { game } = useGameStore(state => ({
+        game: state.game
+    }))
 
     const [name, setName] = useState("");
     const [photo, setPhoto] = useState("");
@@ -49,16 +37,10 @@ export default function GenericDetails({ playerType }) {
 
         if (playerType === 'user') {
             setUser({ ...user, name: name })
-            socket.emit('updateDetails', {
-                playerType: 'user',
-                updatedDetails: { name: name, avatar: chosenPhoto }
-            });
+          
         } else {
             setOpponent({ ...opponent, name: name })
-            socket.emit('updateDetails', {
-                playerType: 'opponent',
-                updatedDetails: { name: name, avatar: chosenPhoto }
-            });
+         
         }
         nav('/game')
     }

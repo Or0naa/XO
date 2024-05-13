@@ -3,7 +3,7 @@ import Confetti from 'react-confetti';
 import styles from './style.module.scss';
 import Button from '../../components/Button';
 import { useNavigate } from 'react-router-dom';
-import { useGameStore, useUserStore, useOponentStore } from '../../store';
+import { useGameStore } from '../../store';
 import Frame from '../../components/Frame';
 import X_index from '../../components/XO/X_index';
 import O_index from '../../components/XO/O_index';
@@ -15,16 +15,7 @@ export default function Winning({ winner }) {
       game: state.game,
       setGame: state.setGame
     })
-  ); const  {user}  = useUserStore(
-    state => ({
-      user: state.user,
-    })
-  ); const  opponent = useOponentStore(
-    state => ({
-      opponent: state.opponent
-    })
-  );
-
+  )
 
 
   const restartGame = () => {
@@ -49,7 +40,7 @@ export default function Winning({ winner }) {
   const [isXwin, setXwin] = useState(game.winner == 'X');
   const [isOwin, setOwin] = useState(game.winner == 'O');
   console.log("x", isXwin, 'o', isOwin)
-  const [winnerName, setWinnerName] = useState(user.sigh == game.winner ? user.name : opponent.opponent.name)
+  const [winnerName, setWinnerName] = useState("")
   
 
   return (
