@@ -19,8 +19,8 @@ export default function GameBoard() {
       <div className={style.yellowLine}>
         <div className={style.orangeBack}></div>
         <div className={style.players}>
-          <PlayerView playerType="user" player={game.players[0]} />
-          <PlayerView playerType="opponent" player={game.players[1]} />
+          <PlayerView player={game.players[0]} />
+          <PlayerView  player={game.players[1]} />
         </div>
       </div>
       <div className={style.boardContainer}>

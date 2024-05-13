@@ -33,7 +33,7 @@ export default function Menu() {
 
     return (
         <div className={style.menu}>
-            <img src='./logo.png'></img>
+            <img src={'./logo.png'}></img>
             <div className={style.buttons}>
                 <Button handleClick={handleClick} > Play Solo
                     {/* computer game */}

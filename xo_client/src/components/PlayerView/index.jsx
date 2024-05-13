@@ -5,31 +5,16 @@ import O_index from '../XO/O_index';
 import { useGameStore } from '../../store';
 
 
-export default function PlayerView({ playerType, player }) {
-
-
-
-  const { game } = useGameStore(
-    state => ({
-      game: state.game
-    }));
-
-
-
-  const { setGame } = useGameStore(
-    state => ({
-      setGame: state.setGame
-    })
-  );
+export default function PlayerView({ player }) {
 
 
   return (
     <>
       <div className={style.player}>
-        <img src={player.avatar} alt="playerImg" />
+        <img src={`${player.avatar}`} alt={player.avatar} />
         <div className={style.playerInfo}>
-          <div className={style.sigh}>
-            {player.sigh === 'X' ? <X_index /> : <O_index />}
+          <div className={style.sign}>
+            {player.sign === 'X' ? <X_index /> : <O_index />}
           </div>
           <div className={style.wins}>wins: {player.wins}</div>
         </div>
