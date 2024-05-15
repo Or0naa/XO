@@ -71,7 +71,8 @@ export const useGameStore = create((set, get) => ({
                     roomNumber: roomId,
                     type: "friend", // עדכון לסוג משחק נגד שחקן אחר
                     players: {
-                        player1: {...game.players[0],
+                        player1: {
+                            ...game.players[0],
                             sign: room.players[0].sign,
                             socketId: room.players[0].id
                         },
@@ -126,7 +127,7 @@ export const useGameStore = create((set, get) => ({
     },
     // מהלך של המחשב
     computerMove: async () => {
-        const { board, players } = get().game;
+        const { board, players, currentTurn } = get().game;
         await new Promise(resolve => setTimeout(resolve, 400));
 
         const newBoard = computerWins(board, players[1].sign, players[0].sign) ||
@@ -136,49 +137,54 @@ export const useGameStore = create((set, get) => ({
         if (newBoard) {
             const { i, j } = newBoard.lastMove;
             if (newBoard === "row" || newBoard === "colomn" || newBoard === "diagonaldown" || newBoard === "diagonalup") {
-                set({ game: { ...get().game, board: newBoard.board, lastMove: { i, j }, winner: players[1].sign, isGameOver: true } });
-            } else {
-                set({ game: { ...get().game, board: newBoard.board, lastMove: { i, j }, currentTurn: get().game.currentTurn === 'X' ? 'O' : 'X' } });
+                let turn = players[0].sign;
+                set({ game: { ...get().game, currentTurn: turn, board: newBoard.board, lastMove: { i, j }, winner: players[1].sign, isGameOver: true } });
             }
         }
     },
     // טיפול במהלך 
-    // handleMove: (i, j) => {
-    //     const { game } = get();
-    //     console.log("game: ", game)
-    //     const { board, currentTurn, count, isGameOver } = game;
-    //     // if (board[i][j] || game.isGameOver) return; // אם המשבצת כבר מומלאת או שהמשחק כבר נגמר, יש לחזור מיידית
+    handleMove: (i, j) => {
+        const { game } = get();
+        // console.log("game: ", game)
+        const { board, currentTurn, count, isGameOver, type, players } = game;
+        // if (board[i][j] || game.isGameOver) return; // אם המשבצת כבר מומלאת או שהמשחק כבר נגמר, יש לחזור מיידית
 
-    //     const newBoard = board.map(row => [...row]);
-    //     newBoard[i][j].value = currentTurn;
+        const newBoard = board.map(row => [...row]);
+        newBoard[i][j].value = currentTurn;
 
-    //     let isDraw = newBoard.every(row => row.every(square => square !== ''));
+        let isDraw = newBoard.every(row => row.every(square => square.value !== ''));
 
-    //     let result = checkWinner(newBoard, currentTurn, i, j);
+        let result = checkWinner(newBoard, currentTurn, i, j);
 
-    //     if (isDraw) {
-    //         // אם יש ניצחון או תיקו, יש לעדכן את הסטייט בהתאם
-    //         const winnerSign = result ? currentTurn : 'draw';
-    //         set(state => ({
-    //             game: {
-    //                 ...state.game,
-    //                 board, board: newBoard, lastMove: { i, j }, winner: winnerSign, isGameOver: true
-    //             }
+        if (isDraw || result) {
+            // אם יש ניצחון או תיקו, יש לעדכן את הסטייט בהתאם
+            console.log("drow or winner");
+            const winnerSign = result ? currentTurn : 'draw';
+            set(state => ({
+                game: {
+                    ...state.game,
+                    board, board: newBoard, lastMove: { i, j }, winner: winnerSign, isGameOver: true
+                }
 
-    //         }));
-    //         socket.emit('move', { i, j, currentTurn, winner: winnerSign });
-    //     } else {
-    //         // אחרת, יש להחליף את התור של השחקן הנוכחי ולעדכן את הלוח
-    //         set(state => ({
-    //             game: {
-    //                 ...state.game,
-    //                 board, board: newBoard, lastMove: { i, j }, currentTurn: currentTurn === 'X' ? 'O' : 'X'
-    //             }
+            }));
+            socket.emit('move', { i, j, currentTurn, winner: winnerSign });
+        } else {
+            // אחרת, יש להחליף את התור של השחקן הנוכחי ולעדכן את הלוח
+            console.log("currentTurn", currentTurn);
+            let changeTrun = currentTurn === 'X' ? 'O' : 'X';
+            if (type == "computer") {
+                changeTrun = players[0].sign;
+            }
+            set(state => ({
+                game: {
+                    ...state.game,
+                    board, board: newBoard, lastMove: { i, j }, currentTurn: changeTrun
+                }
 
-    //         }));
-    //         socket.emit('move', { i, j, currentTurn });
-    //     }
-    // },
+            }));
+            socket.emit('move', { i, j, currentTurn });
+        }
+    },
     makeMove: (index) => {
         const { game, roomNumber } = get();
         const { board, currentTurn, currentPlayer, type } = game;
@@ -241,8 +247,11 @@ export const useGameStore = create((set, get) => ({
 }));
 
 function checkWinner(board, sign, i, j) {
-    if (row(board, sign, 0, j)) return "row";
-    if (colomn(board, sign, i, 0)) return "colomn";
+    console.log("check")
+    if (row(board, sign, 0, j)) {
+        console.log("row")
+        return "row";
+    } if (colomn(board, sign, i, 0)) return "colomn";
     if (sign === board[0][0] && diagonaldown(board, sign, 0, 0)) return "diagonaldown";
     if (sign === board[num - 1][0] && diagonalup(board, sign, num - 1, 0)) return "diagonalup";
     return false;
@@ -252,41 +261,46 @@ function checkWinner(board, sign, i, j) {
 // פונקציות עזר לבדיקת ניצחון
 function row(arr, currentTurn, i, j) {
     if (i === arr.length) return true;
-    if (arr[i][j] !== currentTurn) return false;
+    if (arr[i][j].value !== currentTurn) return false;
     return row(arr, currentTurn, i + 1, j);
 }
 
 function colomn(arr, currentTurn, i, j) {
     if (j === arr.length) return true;
-    if (arr[i][j] !== currentTurn) return false;
+    if (arr[i][j].value !== currentTurn) return false;
     return colomn(arr, currentTurn, i, j + 1);
 }
 
 function diagonaldown(arr, currentTurn, i, j) {
     if (i === arr.length) return true;
-    if (arr[i][j] !== currentTurn) return false;
+    if (arr[i][j].value !== currentTurn) return false;
     return diagonaldown(arr, currentTurn, i + 1, j + 1);
 }
 
 function diagonalup(arr, currentTurn, i, j) {
     if (i === -1) return true;
-    if (arr[i][j] !== currentTurn) return false;
+    if (arr[i][j].value !== currentTurn) return false;
     return diagonalup(arr, currentTurn, i - 1, j + 1);
 }
 
 // פונקציות למהלך של המחשב
 function computerWins(board, ai, human) {
+    console.log("board: ", board)
+    console.log("ai: ", ai)
+    console.log("human: ", human)
     let i = 0;
     let j = 0;
     let foundMove = false;
+    const newBoard = board.map(row => [...row]);
     while (i < num && !foundMove) {
-        if (!board[i][j]) {
-            board[i][j] = ai;
-            if (checkWinner(board)) {
+        if (newBoard[i][j].value == "") {
+            newBoard[i][j].value = ai;
+            if (checkWinner(newBoard)) {
                 foundMove = true;
+
             }
             if (!foundMove) {
-                board[i][j] = '';
+                newBoard[i][j].value = '';
             }
         }
         j++;
@@ -295,23 +309,23 @@ function computerWins(board, ai, human) {
             i++;
         }
     }
-    return foundMove ? { board, lastMove: { i, j } } : null;
+    return foundMove ? { board: newBoard, lastMove: { i, j } } : null;
 }
 
 const num = useGameStore.getState().game.difficulty;
 
 function computerBestMove(board, ai, human) {
-
     let i = 0;
     let j = 0;
     let foundMove = false;
+    const newBoard = board.map(row => [...row]);
     while (i < num && !foundMove) {
-        if (!board[i][j]) {
-            board[i][j] = human;
-            if (!checkWinner(board)) {
-                board[i][j] = '';
+        if (newBoard[i][j].value == "") {
+            newBoard[i][j] = human;
+            if (!checkWinner(newBoard)) {
+                newBoard[i][j].value = '';
             } else {
-                board[i][j] = ai;
+                newBoard[i][j].value = ai;
                 foundMove = true;
             }
         }
@@ -321,13 +335,16 @@ function computerBestMove(board, ai, human) {
             i++;
         }
     }
-    return foundMove ? { board, lastMove: { i, j } } : null;
+    return foundMove ? { board: newBoard, lastMove: { i, j } } : null;
 }
 
 function randomMove(board, ai, human) {
-    console.log("board: ", board)
-    console.log("ai: ", ai)
-    console.log("human: ", human)
+    const emptySquares = board.flat().filter(cell => cell.value === '');
+    if (emptySquares.length == 0) {
+        return null;
+    }
+
+
     let random = Math.floor(Math.random() * board.length * board.length);
     let i = Math.floor(random / board.length);
     let j = random % board.length;

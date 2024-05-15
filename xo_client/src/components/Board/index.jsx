@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 export default function Board() {
     const { game } = useGameStore();
     const { handleMove, setGame } = useGameStore();
+    const nav = useNavigate()
 
     const [board, setBoard] = useState([]);
 
@@ -28,24 +29,30 @@ export default function Board() {
         }
     }, [game.difficulty, setGame]);
 
+    useEffect(() => {
+        if (game.winner && game.winner != "") {
+            nav('/win')
+        }
+    }, [game.winner])
+
     const handleSquareClick = (i, j) => {
-        handleMove(i, j);
-      
+        useGameStore.getState().handleMove(i, j);
+
         // אם המשחק הוא נגד המחשב וזה תורו של המחשב
         if (game.type === "computer") {
-          // קרא לפונקציית המהלך של המחשב
-          handleComputerMove();
+            // קרא לפונקציית המהלך של המחשב
+            handleComputerMove();
         }
-      };
+    };
 
-      const handleComputerMove = () => {
+    const handleComputerMove = () => {
         useGameStore.getState().computerMove();
-      };
+    };
 
     return (
         <Frame>
             <div className={styles.board}>
-                {board.map((line, i) => (
+                {game.board.map((line, i) => (
                     <div key={i} className={styles.board_row}>
                         {line.map((square, j) => (
                             <Frame key={j}>
