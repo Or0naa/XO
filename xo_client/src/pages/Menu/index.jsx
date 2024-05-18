@@ -13,22 +13,20 @@ export default function Menu() {
             game: state.game,
         })
     );
-    const { setGame } = useGameStore(
-        state => ({
-            setGame: state.setGame
-        })
-    );
+
 
  
 
     const navigate = useNavigate();
 
     const handleClick = () => {
-        setGame({ ...game, gameType: "computer" })
+        useGameStore.getState().setGameType("computer");
+
         navigate('/choose');
     }
     const joinGame = () => {
-        setGame({ ...game, gameType: "friend" })
+        useGameStore.getState().setGameType("friend");
+
 
         navigate('/join');
     };

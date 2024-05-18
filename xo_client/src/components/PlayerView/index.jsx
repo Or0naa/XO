@@ -8,6 +8,7 @@ import { useGameStore } from '../../store';
 export default function PlayerView({ player }) {
 
 
+
   return (
     <>
       <div className={style.player}>

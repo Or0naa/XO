@@ -11,15 +11,16 @@ import { useGameStore } from '../../store';
 export default function CreateGame() {
   const nav = useNavigate();
   const game = useGameStore(state => state.game);
-  const setGame = useGameStore(state => state.setGame);
 
   console.log(game.players[1])
 
   useEffect(() => {
-    if (game.players && game.players.length > 1 && game.players[1].id !== "") {
+    if (game.startGame) {
       nav('/choose');
     }
   }, [game.players]);
+
+  console.log("cdnsj", game)
 
 
 

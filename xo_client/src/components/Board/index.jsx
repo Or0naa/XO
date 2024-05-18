@@ -43,6 +43,13 @@ export default function Board() {
             // קרא לפונקציית המהלך של המחשב
             handleComputerMove();
         }
+        if (game.type == "friend") {
+            handleFriendMove();
+        }
+    };
+
+    const handleFriendMove = () => {
+        useGameStore.getState().friendMove();
     };
 
     const handleComputerMove = () => {
