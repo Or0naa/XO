@@ -3,16 +3,20 @@ import Menu from "./pages/Menu";
 import PlayerDetails from "./pages/PlayerDetails";
 import Welcome from "./pages/Welcome";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { useState } from "react";
+import { useEffect } from "react";
 import Winning from "./pages/Winning";
 import WaitingJoin from "./pages/WaitingJoin";
 import GameBoard from "./pages/GameBoard";
 import CreateGame from "./pages/CreateGame";
 import ChoosePlayer from "./pages/ChoosePlayer";
+import { useGameStore } from "./store";
 
 export default function App() {
-  const [roomId, setRoomId] = useState(null);
+  const handleGameUpdate = useGameStore(state => state.handleGameUpdate);
 
+  useEffect(() => {
+    handleGameUpdate();
+  }, [handleGameUpdate]);
   const router = createBrowserRouter([
     {
       path: "/",
@@ -24,14 +28,11 @@ export default function App() {
     },
     {
       path: "/join",
-      element: <JoinGame connectToRoom={(roomId) => {
-        setRoomId(roomId);
-        console.log('Connecting to room:', roomId);
-      }} />,
+      element: <JoinGame />,
     },
     {
       path: "/create",
-      element: <CreateGame roomNumber={roomId} />
+      element: <CreateGame />
     },
     {
       path: "/player",
@@ -61,7 +62,7 @@ export default function App() {
 
   return (
     <>
-        <RouterProvider router={router} />
+      <RouterProvider router={router} />
     </>
   );
 }

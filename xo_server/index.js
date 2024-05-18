@@ -14,35 +14,49 @@ const rooms = {}; // מילון לאחסון החדרים
 io.on('connection', (socket) => {
     console.log('A user connected');
 
-    socket.on('joinGame', (data) => {
-        console.log(data);
-    })
 
-    socket.on('game:join-room', (roomId, playerDetails) => {
+
+    socket.on('game:join-room', (roomId, game) => {
         if (!roomId) {
             // יצירת חדר חדש
             const newRoomId = generateRoomNumber();
             const newRoom = {
-                players: [{ id: socket.id, ...playerDetails, sign: 'X' }],
-                board: Array(9).fill(null),
-                currentTurn: 0
-            };
+                game: game
+            }
+            console.log(newRoom)
             rooms[newRoomId] = newRoom;
             socket.join(newRoomId);
+            newRoom.players ? newRoom.players.push({
+                socketId: socket.id,
+                sign: "X",
+                name: "Player 1",
+                avatar: '/woman.bmp',
+                wins: "0",
+            }) : newRoom.players = [{
+                socketId: socket.id,
+                sign: "X",
+                name: "Player 1",
+                avatar: '/woman.bmp',
+                wins: "0",
+            }]
             console.log(`${socket.id} created and joined room ${newRoomId}`);
             socket.emit('roomNumber', newRoomId);
         } else {
             // הצטרפות לחדר קיים
             const room = rooms[roomId];
             if (room && room.players.length < 2) {
-                room.players.push({ id: socket.id, ...playerDetails, sign: 'O' });
+                room.players.push({
+                    sign: "O",
+                    name: "Player 2",
+                    avatar: '/woman.bmp',
+                    wins: 0,
+                    socketId: socket.id,
+                });
                 socket.join(roomId);
                 console.log(`${socket.id} joined room ${roomId}, current players:`, room.players);
+                console.log('Emitting game:join-success for room', roomId);
+                io.to(roomId).emit('game:join-success', room);
 
-                if (room.players.length === 2) {
-                    console.log('Emitting game:join-success for room', roomId);
-                    io.to(roomId).emit('game:join-success', room);
-                }
             } else {
                 console.log('Room is full, emitting roomFull');
                 socket.emit('roomFull');
@@ -50,16 +64,25 @@ io.on('connection', (socket) => {
         }
     });
 
-    socket.on('move', ({ roomId, index }) => {
+    socket.on('move', ({ roomId, data }) => {
         const room = rooms[roomId];
-        if (room && room.players.some(player => player.id === socket.id)) {
-            const currentPlayer = room.players[room.currentTurn];
-            if (socket.id === currentPlayer.id && room.board[index] === null) {
-                room.board[index] = currentPlayer.sign;
-                room.currentTurn = 1 - room.currentTurn;
+        const game = data;
+        console.log('move', data);
+        if (room && room.game.startGame) {
+            if (game.currentPlayer == socket.id) {
+                room.game.board[game.i][game.j] = game.currentTurn;
+                room.game.currentTurn = game.currentTurn == 'X' ? 'O' : 'X';
+                room.game.currentPlayer = room.game.currentTurn;
                 io.to(roomId).emit('gameUpdate', room);
             }
+            else {
+                console.log('Not your turn');
+            }
         }
+        else {
+            console.log('Game not started');
+        }
+
     });
 
     socket.on('disconnect', () => {
