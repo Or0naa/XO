@@ -21,6 +21,7 @@ export default function Menu() {
 
     const handleClick = () => {
         useGameStore.getState().setGameType("computer");
+        console.log("game type", game.type);
 
         navigate('/choose');
     }

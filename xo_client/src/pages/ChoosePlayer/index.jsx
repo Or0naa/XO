@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './style.module.scss';
 import GrayXO from '../../components/GrayXO';
 import Frame from '../../components/Frame';
@@ -10,40 +10,37 @@ import { useGameStore } from '../../store';
 
 
 export default function ChoosePlayer() {
-
-
+  const user = useGameStore(state => state.user);
+  const handleGameUpdate = useGameStore(state => state.handleGameUpdate);
   const nav = useNavigate();
+  useEffect(() => {
+    if (game.players[1] && game.players[1].socketId == user && game.type == "friend") {
+      nav('/menu');
+    }
+  }, [user]);
   const [chosenSign, setChosenSign] = useState(null);
   const { game } = useGameStore(
     state => ({
       game: state.game,
     })
   );
-  const { setGame } = useGameStore(
-    state => ({
-      setGame: state.setGame
-    })
-  );
-  const { updatePlayerInfo } = useGameStore(
-    state => ({
-      updatePlayerInfo: state.updatePlayerInfo
-    })
-  );
+
+
 
 
   const handleSignClick = (sign) => {
- 
+
     // עדכון הסימן של השחקנים
     const updatedPlayers = game.players.map((player, index) => {
-        return { ...player, sign: index === 0 ? sign : sign === 'X' ? 'O' : 'X' };
+      return { ...player, sign: index === 0 ? sign : sign === 'X' ? 'O' : 'X' };
     });
 
     // שמירת השינויים באמצעות פונקציית setGame
-    setGame({ ...game, players: updatedPlayers });
+    handleGameUpdate({ ...game, players: updatedPlayers });
 
     // עדכון הסימן הנבחר
     setChosenSign(sign);
-};
+  };
 
 
 

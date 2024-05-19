@@ -7,27 +7,17 @@ import { useGameStore } from '../../store';
 import { useNavigate } from 'react-router-dom';
 
 export default function Board() {
-    const { game } = useGameStore();
+    const { game, user } = useGameStore();
     const { handleMove, setGame } = useGameStore();
     const nav = useNavigate()
+    console.log("user", user)
 
-    const [board, setBoard] = useState([]);
 
     useEffect(() => {
-        const newBoard = [];
-        for (let i = 0; i < game.difficulty; i++) {
-            const line = [];
-            for (let j = 0; j < game.difficulty; j++) {
-                line.push({ value: "" }); // Initialize the board with empty values
-            }
-            newBoard.push(line);
-        }
-        setGame({ ...game, board: newBoard });
-        setBoard(newBoard);
-        if (game.type == "computer" && game.currentPlayer === game.players[1].sign) {
+        if (game.type == "computer" && game.players[0].sign== "O") {
             handleComputerMove();
         }
-    }, [game.difficulty, setGame]);
+    }, []);
 
     useEffect(() => {
         if (game.winner && game.winner != "") {

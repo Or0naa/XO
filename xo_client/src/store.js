@@ -3,7 +3,8 @@ import { socket } from './socket'
 
 
 export const useGameStore = create((set, get) => ({
-
+    user: null,
+    setUser: (user) => set({ user }),
     game: {
         roomNumber: "",
         players: [],
@@ -16,6 +17,7 @@ export const useGameStore = create((set, get) => ({
         winner: "",
         startGame: false,
         lastMove: { i: null, j: null },
+        user: ""
 
     },
 
@@ -25,7 +27,16 @@ export const useGameStore = create((set, get) => ({
         }));
     },
     setGameType: (type) => {
+        const game = get().game;
         if (type == "computer") {
+            const newBoard = [];
+            for (let i = 0; i < game.difficulty; i++) {
+                const line = [];
+                for (let j = 0; j < game.difficulty; j++) {
+                    line.push({ value: "" }); // Initialize the board with empty values
+                }
+                newBoard.push(line);
+            }
             set(state => ({
                 game: {
                     ...state.game,
@@ -42,7 +53,8 @@ export const useGameStore = create((set, get) => ({
                             wins: "0",
                             sign: "O",
                         }
-                    ]
+                    ],
+                    board: newBoard,
                 }
             }));
         }
@@ -55,6 +67,7 @@ export const useGameStore = create((set, get) => ({
     },
     createRoom: () => {
         const game = get().game;
+        const setUser = get().setUser;
         socket.emit('game:join-room', null, game);
         socket.on('roomNumber', (roomNum) => {
             console.log('roomNumber', roomNum);
@@ -64,6 +77,7 @@ export const useGameStore = create((set, get) => ({
                     roomNumber: roomNum,
                 }
             }));
+
         });
         socket.on('game:join-success', (room) => {
             console.log('game:join-success', room);
@@ -72,11 +86,15 @@ export const useGameStore = create((set, get) => ({
                     ...state.game,
                     players: room.players,
                     currentPlayer: room.players[0].sign,
+                    board: room.board,
                     startGame: true,
                 }
             })
-
             );
+            const currentUser = room.players.find(player => player.socketId === socket.id);
+            if (currentUser) {
+                setUser(currentUser.socketId);
+            }
         })
     },
     joinToRoom: (roomId) => {
@@ -89,7 +107,7 @@ export const useGameStore = create((set, get) => ({
     },
     joinToRoom: (roomId) => {
         const game = get().game;
-
+        const setUser = get().setUser;
         socket.emit('game:join-room', roomId, game);
         socket.on('roomFull', () => {
             console.log('roomFull');
@@ -102,9 +120,15 @@ export const useGameStore = create((set, get) => ({
                     ...state.game,
                     players: room.players,
                     currentPlayer: room.players[0].sign,
+                    board: room.board,
                     startGame: true,
+                    roomNumber: roomId,
                 }
             }))
+            const currentUser = room.players.find(player => player.socketId === socket.id);
+            if (currentUser) {
+                setUser(currentUser.socketId);
+            }
 
             console.log('setGame', get().game);
 
@@ -112,9 +136,17 @@ export const useGameStore = create((set, get) => ({
         });
 
     },
-    handleGameUpdate: (room) => {
-        console.log('handleGameUpdate', room);
-        socket.emit('move', room);
+    handleGameUpdate: (data) => {
+        const game = get().game;
+        console.log('handleGameUpdate', data);
+        set(state => ({
+            game: {
+                ...state.game,
+                ...data
+            }
+        }));
+        socket.emit('move', game.roomNumber, data);
+        console.log(game.roomNumber);
         socket.on('gameUpdate', (data) => {
             console.log('gameUpdate', data);
             set(state => ({
@@ -126,22 +158,65 @@ export const useGameStore = create((set, get) => ({
         });
     },
     // מהלך של המחשב
+    handleMove: (i, j) => {
+        const { game, user, handleGameUpdate } = get();
+        let playerTurn = game.players[0]
+        if (game.type == "friend") {
+            playerTurn = game.players.find((p) => p.socketId === user);
+        } 
+        console.log("playerTurn", playerTurn);
+            
+        // בדיקה אם התא כבר תפוס
+        if (game.board[i][j].value !== "") return;
+    
+        // בדיקה אם המשתמש הנוכחי הוא השחקן שבתוֹר
+        if (game.type== "friend" && game.currentTurn !== playerTurn.sign) return;
+    
+        // עדכון הלוח עם המהלך הנוכחי
+        const newBoard = game.board.map((row, rowIndex) =>
+            row.map((cell, colIndex) =>
+                rowIndex === i && colIndex === j ? { value: playerTurn.sign } : cell
+            )
+        );
+    
+        // בדיקה אם יש מנצח
+        const winner = check(newBoard, playerTurn.sign, i, j);
+    
+        // עדכון המידע של המשחק
+        handleGameUpdate({
+            board: newBoard,
+            currentPlayer: game.currentPlayer === 'X' ? 'O' : 'X',
+            winner: winner ? playerTurn.sign : "",
+            count: game.count - 1,
+        });
+    },
+    
     computerMove: async () => {
-        console.log("computerMove")
+        const game = get().game;
+        await new Promise(resolve => setTimeout(resolve, 600));
+        return computerWins(game.board, game.players[1].sign, game.players[0].sign)||
+            computerBestMove(game.board, game.players[1].sign, game.players[0].sign)||
+            randomMove(game.board, game.players[1].sign, game.players[0].sign);
     },
     // טיפול במהלך 
-    handleMove: (i, j) => {
-        console.log("handleMove")
-
-    },
     friendMove: () => {
-        console.log("friendMove")
+        const handleGameUpdate = get().handleGameUpdate;
+        const game = get().game;
+        const user = get().user;
+        user.sign = game.players.find((p) => p.socketId === user).sign;
+        if (game.currentTurn !== user.sign) return;
+        const changeTurn = game.currentTurn === "X" ? "O" : "X";
+        handleGameUpdate({
+            currentTurn: changeTurn,
+        })
+
     },
 
 
 }));
 
 function check(board, sign, i, j) {
+    const setGame = useGameStore.getState().setGame;
     console.log("check")
     if (row(board, sign, 0, j)) {
         console.log("row")
@@ -180,141 +255,106 @@ function diagonalup(arr, currentTurn, i, j) {
 const num = useGameStore.getState().game.difficulty;
 
 // פונקציות למהלך של המחשב
-function computerWins(board, newBoard, ai, human) {
-    console.log("computer")
+function computerWins(board, ai, human) {
+    const game = useGameStore.getState().game;
+    const setGame = useGameStore.getState().setGame;
+    console.log("computer");
     let i = 0;
     let j = 0;
     let foundMove = false;
-    while (i < board.length && !foundMove) {
-        if (board[i][j].value === '') {
-            board[i][j].value = ai;
-            if (check(board, ai, i, j)) {
-                newBoard.board = board;
-                newBoard.i = i;
-                newBoard.j = j;
+    let newBoard = board;
+    while (i < newBoard.length && !foundMove) {
+        if (newBoard[i][j].value === '') {
+            newBoard[i][j].value = ai;
+            if (check(newBoard, ai, i, j)) {
+                setGame({
+                    board: newBoard,
+                    lastMove: {
+                        i: i,
+                        j: j,
+                    },
+                    winner: ai,
+                });
                 foundMove = true;
             }
             if (!foundMove) {
-                board[i][j].value = ''
+                newBoard[i][j].value = '';
             }
         }
         j++;
-        if (j >= board.length) {
+        if (j >= newBoard.length) {
             j = 0;
             i++;
         }
     }
-    return foundMove ? newBoard : null;
+    return foundMove ? game : null;
 }
 
-function computerBestMove(board, newBoard, ai, human) {
+function computerBestMove(board, ai, human) {
     console.log("best")
     let i = 0;
     let j = 0;
     let foundMove = false;
-    while (i < board.length && !foundMove) {
-        if (board[i][j].value === '') {
-            board[i][j].value = human;
-            if (!check(board, human, i, j)) {
-                board[i][j].value = '';
+    const setGame = useGameStore.getState().setGame;
+    const game = useGameStore.getState().game;
+    let newBoard = game.board;
+    while (i < newBoard.length && !foundMove) {
+        if (newBoard[i][j].value === '') {
+            newBoard[i][j].value = human;
+            if (!check(newBoard, human, i, j)) {
+                newBoard[i][j].value = '';
             } else {
-                board[i][j].value = ai;
-                newBoard.board = board;
-                newBoard.i = i;
-                newBoard.j = j;
+                newBoard[i][j].value = ai;
+                setGame({
+                    board: newBoard,
+                    lastMove: {
+                        i: i,
+                        j: j,
+                    },
+                });
                 foundMove = true;
             }
         }
         j++;
-        if (j >= board.length) {
+        if (j >= newBoard.length) {
             j = 0;
             i++;
         }
     }
-    if (foundMove) return newBoard;
+    if (foundMove) return game;
     return null;
 }
 
-function randomMove(board, newBoard, ai, human) {
+function randomMove(board, ai, human) {
     console.log("random")
+    const setGame = useGameStore.getState().setGame;
+    const game = useGameStore.getState().game;
+    let newBoard = game.board;
+    const boardFull = board.every((row) => row.every((cell) => cell.value !== ''));
+    if (boardFull){
+        setGame({
+            board: newBoard,
+            lastMove: {
+                i: -1,
+                j: -1,
+            },
+            winner: 'tie',
+        });
+        return;
+    }
     let random = Math.floor(Math.random() * board.length * board.length);
     let i = Math.floor(random / board.length);
     let j = random % board.length;
-    if (board[i][j].value === '') {
-        board[i][j].value = ai;
-        newBoard.board = board;
-        newBoard.i = i;
-        newBoard.j = j;
-        return newBoard;
+    if (newBoard[i][j].value === '') {
+        newBoard[i][j].value = ai;
+        setGame({
+            board: newBoard,
+            lastMove: {
+                i: i,
+                j: j,
+            },
+        });
+        return game;
     }
-    return randomMove(board, newBoard);
+    return randomMove(board, ai, human);
 }
-
-export const useUserStore = create((set, get) => ({
-    user: null,
-    login: async (formData) => {
-        await new Promise(resolve => setTimeout(resolve, 5 * 1000))
-        //apiReq
-        const user = { name: 'yosef', age: 12, token: '9898' }
-        localStorage.user = JSON.stringify(user)
-        localStorage.token = user.token
-        console.log({ user })
-        set({ user })
-    },
-    logout: () => {
-        localStorage.clear()
-        set({ user: null })
-    }
-}))
-export const useUserPrefStore = create((set, get) => ({
-    isDark: false,
-    currency: 'usd',
-    language: 'English',
-    setCurrency: (cur) => set({ currency: cur }),
-    setDark: () => set(state => ({ isDark: !state.isDark })),
-    setLanguage: (lan) => {
-        //check if lang exist
-        set({ language: lan })
-    },
-    resetAll: () => set({ isDark: false, currency: 'usd', language: 'English' })
-}))
-
-// import { create } from 'zustand'
-
-// export const useUserStore = create((set) => ({
-//     user: {
-//         name: '',
-//         avatar: '',
-//         wins: '0',
-//         sigh: 'X',
-
-//     },
-//     setUser: (user) => set({ user })
-
-// }))
-
-// export const useOponentStore = create((set) => ({
-//     opponent: {
-//         name: '',
-//         avatar: '.',
-//         wins: '0',
-//         sigh: 'O',
-//     },
-//     setOpponent: (opponent) => set({ opponent })
-
-// }))
-
-// export const useGameStore = create((set) => ({
-//     game: {
-//         win: false,
-//         winner: null,
-//         board: [],
-//         squares: 3,
-//         currentPlayer:  'X',
-//         gameType: '',
-//         room: {}
-//     },
-
-//     setGame: (game) => set({ game })
-// }))
-
