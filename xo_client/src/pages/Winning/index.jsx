@@ -10,37 +10,18 @@ import O_index from '../../components/XO/O_index';
 
 export default function Winning({ winner }) {
   const nav = useNavigate();
-  const { game, setGame } = useGameStore(
+  const { game } = useGameStore(
     state => ({
       game: state.game,
-      setGame: state.setGame
     })
   )
+  const { restartGame } = useGameStore()
 
 
-  const restartGame = () => {
-    setGame({
-      win: false,
-      winner: null,
-      board: [],
-      squares: 3,
-      currentPlayer: 'X',
-      gameType: 'computer'
-    })
+  const restart = () => {
+    useGameStore.getState().restartGame()
     nav('/game')
   }
-
-  // Add confetti effect when the component mounts
-  useEffect(() => {
-    return () => {
-      // Clean up any confetti effect when the component unmounts
-    };
-  }, []);
-
-  const [isXwin, setXwin] = useState(game.winner == 'X');
-  const [isOwin, setOwin] = useState(game.winner == 'O');
-  console.log("x", isXwin, 'o', isOwin)
-  const [winnerName, setWinnerName] = useState("")
   
 
   return (
@@ -49,7 +30,7 @@ export default function Winning({ winner }) {
       <Confetti width={window.innerWidth} height={window.innerHeight} />
 
       {/* Winning message and buttons */}
-      {game.winner == "Draw" ? <h2>Draw!</h2> : <h2>{winnerName} wins!</h2>}
+      {game.winner == "Draw" ? <h2>Draw!</h2> : <h2>{game.winner} wins!</h2>}
       <Frame>
         <div className={styles.board}>
           {game.board.map((row, rowIndex) => (
@@ -57,14 +38,14 @@ export default function Winning({ winner }) {
               {row.map((cell, cellIndex) => (
                 <Frame>
                   <div key={cellIndex} className={cell.value == game.winner ? styles.square_frame : styles.gray}>
-                    {cell.value == "X" ? <X_index isActive={isXwin} /> : cell.value == "O" ? <O_index isActive={isOwin} /> : ""}
+                    {cell.value == "X" ? <X_index isActive={cell.isWin} /> : cell.value == "O" ? <O_index isActive={cell.isWin} /> : ""}
                   </div>
                 </Frame>
               ))}
             </div>
           ))}</div>
       </Frame>
-      <Button handleClick={restartGame}>Play Again</Button>
+      <Button handleClick={restart}>Play Again</Button>
       <Button handleClick={() => nav('/menu')}>Back to Menu</Button>
     </div>
   );
