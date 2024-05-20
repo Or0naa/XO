@@ -11,7 +11,6 @@ export default function GameBoard() {
     game: state.game
   }));
 
-  console.log(game);
  
 
   return (

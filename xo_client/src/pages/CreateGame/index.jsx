@@ -12,7 +12,6 @@ export default function CreateGame() {
   const nav = useNavigate();
   const game = useGameStore(state => state.game);
 
-  console.log(game.players[1])
 
   useEffect(() => {
     if (game.startGame) {
@@ -20,7 +19,6 @@ export default function CreateGame() {
     }
   }, [game.players]);
 
-  console.log("cdnsj", game)
 
 
 
