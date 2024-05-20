@@ -10,7 +10,6 @@ export default function Board() {
     const { game, user } = useGameStore();
     const { handleMove, setGame } = useGameStore();
     const nav = useNavigate()
-    console.log("user", user)
 
 
     useEffect(() => {

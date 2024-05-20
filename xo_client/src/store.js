@@ -159,43 +159,68 @@ export const useGameStore = create((set, get) => ({
     },
     // מהלך של המחשב
     handleMove: (i, j) => {
-        const { game, user, handleGameUpdate } = get();
+        const { game, user, handleGameUpdate, setGame } = get();
         let playerTurn = game.players[0]
         if (game.type == "friend") {
             playerTurn = game.players.find((p) => p.socketId === user);
-        } 
+            if (!playerTurn) return;
+        }
         console.log("playerTurn", playerTurn);
-            
+
         // בדיקה אם התא כבר תפוס
         if (game.board[i][j].value !== "") return;
-    
-        // בדיקה אם המשתמש הנוכחי הוא השחקן שבתוֹר
-        if (game.type== "friend" && game.currentTurn !== playerTurn.sign) return;
-    
+
+
         // עדכון הלוח עם המהלך הנוכחי
         const newBoard = game.board.map((row, rowIndex) =>
             row.map((cell, colIndex) =>
                 rowIndex === i && colIndex === j ? { value: playerTurn.sign } : cell
             )
         );
-    
+
         // בדיקה אם יש מנצח
-        const winner = check(newBoard, playerTurn.sign, i, j);
-    
+        const res = check(newBoard, playerTurn.sign, i, j);
+        let winBoard = newBoard;
+        if (res) {
+            if (res === "row") {
+                for (let k = 0; k < newBoard.length; k++) {
+                    winBoard[k][j].isWin = true;
+                }
+            }
+            if (res === "colomn") {
+                for (let k = 0; k < newBoard.length; k++) {
+                    winBoard[i][k].isWin = true;
+                }
+            }
+            if (res === "diagonaldown") {
+                for (let k = 0; k < newBoard.length; k++) {
+                    winBoard[k][k].isWin = true;
+                }
+            }
+            if (res === "diagonalup") {
+                for (let k = newBoard.length - 1; k < 0; k--) {
+                    winBoard[k][k].isWin = true;
+                }
+            }
+            setGame({
+                board: winBoard,
+                winner: playerTurn.name,
+            });
+        }
+
         // עדכון המידע של המשחק
         handleGameUpdate({
             board: newBoard,
             currentPlayer: game.currentPlayer === 'X' ? 'O' : 'X',
-            winner: winner ? playerTurn.sign : "",
             count: game.count - 1,
         });
     },
-    
+
     computerMove: async () => {
         const game = get().game;
         await new Promise(resolve => setTimeout(resolve, 600));
-        return computerWins(game.board, game.players[1].sign, game.players[0].sign)||
-            computerBestMove(game.board, game.players[1].sign, game.players[0].sign)||
+        return computerWins(game.board, game.players[1].sign, game.players[0].sign) ||
+            computerBestMove(game.board, game.players[1].sign, game.players[0].sign) ||
             randomMove(game.board, game.players[1].sign, game.players[0].sign);
     },
     // טיפול במהלך 
@@ -211,6 +236,40 @@ export const useGameStore = create((set, get) => ({
         })
 
     },
+    restartGame: () => {
+        const setGame = get().setGame;
+        const game = get().game;
+    
+        // Initialize a new empty board
+        const newBoard = Array.from({ length: game.difficulty }, () =>
+            Array.from({ length: game.difficulty }, () => ({ value: "", isWin: false }))
+        );
+    
+        // Update players' wins
+        const updateWinPlayers = game.players.map(player => {
+            if (player.sign === game.winner) {
+                return { ...player, wins: (player.wins || 0) + 1 }; // Ensure `wins` is updated correctly
+            }
+            return player;
+        });
+    
+        // Reset game state
+        setGame({
+            board: newBoard,
+            winner: "",
+            count: game.difficulty * game.difficulty,
+            startGame: true, // Assume the game starts immediately after reset
+            currentPlayer: "X",
+            roomNumber: game.roomNumber,
+            type: game.type,
+            difficulty: game.difficulty,
+            players: updateWinPlayers,
+            currentTurn: "X",
+        });
+    
+        console.log("restartGame", get().game); // Log the updated game state
+    }
+    
 
 
 }));
@@ -219,7 +278,6 @@ function check(board, sign, i, j) {
     const setGame = useGameStore.getState().setGame;
     console.log("check")
     if (row(board, sign, 0, j)) {
-        console.log("row")
         return "row";
     } if (colomn(board, sign, i, 0)) return "colomn";
     if (sign === board[0][0] && diagonaldown(board, sign, 0, 0)) return "diagonaldown";
@@ -267,8 +325,30 @@ function computerWins(board, ai, human) {
         if (newBoard[i][j].value === '') {
             newBoard[i][j].value = ai;
             if (check(newBoard, ai, i, j)) {
+                const res = check(newBoard, ai, i, j);
+                let winBoard = newBoard;
+                if (res === "row") {
+                    for (let k = 0; k < newBoard.length; k++) {
+                        winBoard[k][j].isWin = true;
+                    }
+                }
+                if (res === "colomn") {
+                    for (let k = 0; k < newBoard.length; k++) {
+                        winBoard[i][k].isWin = true;
+                    }
+                }
+                if (res === "diagonaldown") {
+                    for (let k = 0; k < newBoard.length; k++) {
+                        winBoard[k][k].isWin = true;
+                    }
+                }
+                if (res === "diagonalup") {
+                    for (let k = newBoard.length - 1; k < 0; k--) {
+                        winBoard[k][k].isWin = true;
+                    }
+                }
                 setGame({
-                    board: newBoard,
+                    board: winBoard,
                     lastMove: {
                         i: i,
                         j: j,
@@ -331,7 +411,7 @@ function randomMove(board, ai, human) {
     const game = useGameStore.getState().game;
     let newBoard = game.board;
     const boardFull = board.every((row) => row.every((cell) => cell.value !== ''));
-    if (boardFull){
+    if (boardFull) {
         setGame({
             board: newBoard,
             lastMove: {
